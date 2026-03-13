@@ -6,6 +6,8 @@ const recyclingCenters = [
     { name: "Green Composting Center", lat: 12.9500, lng: 77.5800, type: "Compost" }
 ];
 
+let tileLayer;
+
 function initMap() {
     // Default center (Bangalore as example)
     const center = [12.9716, 77.5946];
@@ -13,12 +15,8 @@ function initMap() {
     // Initialize Leaflet map
     map = L.map('map').setView(center, 13);
 
-    // Add CartoDB Dark Matter tile layer for a premium dark look
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-        subdomains: 'abcd',
-        maxZoom: 20
-    }).addTo(map);
+    const theme = document.documentElement.getAttribute('data-theme') || 'light';
+    updateMapStyle(theme);
 
     // Custom Blue Icon for Recycling Centers
     const blueIcon = L.divIcon({
@@ -38,6 +36,28 @@ function initMap() {
     // Load waste reports from backend
     loadReports();
 }
+
+function updateMapStyle(theme) {
+    if (tileLayer) {
+        map.removeLayer(tileLayer);
+    }
+
+    const darkUrl = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+    const lightUrl = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+    
+    tileLayer = L.tileLayer(theme === 'dark' ? darkUrl : lightUrl, {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 20
+    }).addTo(map);
+}
+
+// Listen for theme changes to swap map tiles
+window.addEventListener('themeChanged', (e) => {
+    if (map) {
+        updateMapStyle(e.detail.theme);
+    }
+});
 
 async function loadReports() {
     try {

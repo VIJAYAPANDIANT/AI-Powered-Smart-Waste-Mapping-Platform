@@ -58,7 +58,11 @@ function approveReport(id) {
     // In a real app, this would call a PATCH /report/:id endpoint
 }
 
+let hotspotChart;
+let lastReports = [];
+
 function renderChart(reports) {
+    lastReports = reports;
     const ctx = document.getElementById('hotspotChart').getContext('2d');
     
     // Group reports by location for a simple chart
@@ -70,7 +74,15 @@ function renderChart(reports) {
     const labels = Object.keys(locationCounts);
     const data = Object.values(locationCounts);
 
-    new Chart(ctx, {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const textColor = isDark ? '#ffffff' : '#0f172a';
+    const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+
+    if (hotspotChart) {
+        hotspotChart.destroy();
+    }
+
+    hotspotChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
             labels: labels,
@@ -87,22 +99,29 @@ function renderChart(reports) {
             maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    labels: { color: '#ffffff' }
+                    labels: { color: textColor }
                 }
             },
             scales: {
                 y: {
                     beginAtZero: true,
-                    ticks: { color: '#ffffff' },
-                    grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                    ticks: { color: textColor },
+                    grid: { color: gridColor }
                 },
                 x: {
-                    ticks: { color: '#ffffff' },
-                    grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                    ticks: { color: textColor },
+                    grid: { color: gridColor }
                 }
             }
         }
     });
 }
+
+// Listen for theme changes to refresh chart colors
+window.addEventListener('themeChanged', () => {
+    if (lastReports.length > 0) {
+        renderChart(lastReports);
+    }
+});
 
 document.addEventListener('DOMContentLoaded', loadDashboard);
