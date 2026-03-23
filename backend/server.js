@@ -3,7 +3,9 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const { db } = require('./config/firebase');
+const bcrypt = require('bcryptjs');
+const db = require('./db');
+const { db: firestore } = require('./config/firebase');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,7 +17,76 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.static(path.join(__dirname, '../frontend')));
 
-// POST /analyzeWaste - Analyze image using Gemini AI
+app.use((req, res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+    next();
+});
+
+// --- Authentication Routes ---
+
+// POST /signup - Register a new user
+app.post('/signup', async (req, res) => {
+    const { username, email, password } = req.body;
+    if (!username || !email || !password) {
+        return res.status(400).json({ error: "Username, email and password are required" });
+    }
+
+    try {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        db.run(`INSERT INTO users (username, email, password) VALUES (?, ?, ?)`, [username, email, hashedPassword], function(err) {
+            if (err) {
+                if (err.message.includes('UNIQUE constraint failed')) {
+                    if (err.message.includes('email')) {
+                        return res.status(400).json({ error: "Email already exists" });
+                    }
+                    return res.status(400).json({ error: "Username already exists" });
+                }
+                return res.status(500).json({ error: "Failed to create user" });
+            }
+            res.status(201).json({ 
+                message: "User registered successfully", 
+                user: { id: this.lastID, username, email, role: 'user', password: password } 
+            });
+        });
+    } catch (error) {
+        console.error("Signup error:", error);
+        res.status(500).json({ error: "Server error during signup" });
+    }
+});
+
+// POST /signin - Authenticate a user
+app.post('/signin', (req, res) => {
+    const { email, password } = req.body;
+    if (!email || !password) {
+        return res.status(400).json({ error: "Email and password are required" });
+    }
+
+    db.get(`SELECT * FROM users WHERE email = ?`, [email], async (err, user) => {
+        if (err) {
+            return res.status(500).json({ error: "Database error" });
+        }
+        if (!user) {
+            return res.status(401).json({ error: "Invalid email or password" });
+        }
+
+        try {
+            const isMatch = await bcrypt.compare(password, user.password);
+            if (!isMatch) {
+                return res.status(401).json({ error: "Invalid email or password" });
+            }
+            // In a real app, you'd issue a JWT here. 
+            // For this demo, we'll just return success and user info.
+            res.json({ 
+                message: "Logged in successfully", 
+                user: { id: user.id, username: user.username, email: user.email, role: user.role, password: password } 
+            });
+        } catch (error) {
+            res.status(500).json({ error: "Server error during signin" });
+        }
+    });
+});
+
+// --- Waste Reporting Routes (Existing) ---
 app.post('/analyzeWaste', async (req, res) => {
     try {
         const { imageBase64 } = req.body;
@@ -68,7 +139,7 @@ app.post('/analyzeWaste', async (req, res) => {
 // GET /reports - Fetch all waste reports
 app.get('/reports', async (req, res) => {
     try {
-        const reportsRef = db.collection('waste_reports');
+        const reportsRef = firestore.collection('waste_reports');
         const snapshot = await reportsRef.orderBy('timestamp', 'desc').get();
         
         const reports = [];
@@ -99,7 +170,7 @@ app.post('/reportWaste', async (req, res) => {
             report_id: `REP-${Date.now()}`
         };
 
-        const docRef = await db.collection('waste_reports').add(newReport);
+        const docRef = await firestore.collection('waste_reports').add(newReport);
         res.status(201).json({ message: "Report saved successfully", id: docRef.id });
     } catch (error) {
         console.error("Error saving report:", error);
@@ -111,7 +182,7 @@ app.post('/reportWaste', async (req, res) => {
 app.delete('/report/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        await db.collection('waste_reports').doc(id).delete();
+        await firestore.collection('waste_reports').doc(id).delete();
         res.status(200).json({ message: "Report deleted successfully" });
     } catch (error) {
         console.error("Error deleting report:", error);

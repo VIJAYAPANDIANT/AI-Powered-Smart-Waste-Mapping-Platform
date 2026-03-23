@@ -1,0 +1,12 @@
+{
+  "name": "smart-waste-mapping-platform",
+  "version": "1.0.0",
+  "description": "Unified runner for SmartWaste Mapping Platform",
+  "main": "run-app.js",
+  "scripts": {
+    "start": "node run-app.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}

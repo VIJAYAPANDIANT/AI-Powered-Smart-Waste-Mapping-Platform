@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Waste Awareness | Smart Waste Mapping Platform</title>
     <link rel="stylesheet" href="style.css">
+    <script>
+        if (!localStorage.getItem('user')) {
+             window.location.href = 'login.html';
+        }
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 </head>
@@ -22,8 +27,9 @@
                 <li><a href="index.html">Home</a></li>
                 <li><a href="report.html">Report Waste</a></li>
                 <li><a href="map.html">Map View</a></li>
-                <li><a href="awareness.html">Awareness</a></li>
+                <li><a href="awareness.html" class="active">Awareness</a></li>
                 <li><a href="admin.html">Admin</a></li>
+                <li id="auth-nav"></li>
                 <li><button id="theme-toggle" class="theme-toggle-btn" title="Toggle Light/Dark Mode"><i class="fas fa-moon"></i></button></li>
             </ul>
         </nav>
@@ -117,6 +123,7 @@
     <footer>
         <p>&copy; 2026 SmartWaste Mapping Platform. All rights reserved.</p>
     </footer>
+    <script src="auth-ui.js"></script>
     <script src="theme-toggle.js"></script>
     <script src="mobile-menu.js"></script>
 </body>
