@@ -30,8 +30,17 @@
     --input-bg: #000000;
 }
 
-html {
-    scrollbar-gutter: stable;
+@supports (scrollbar-gutter: stable) {
+    html {
+        scrollbar-gutter: stable;
+    }
+}
+
+/* Fallback for Safari/iOS Safari which do not support scrollbar-gutter */
+@supports not (scrollbar-gutter: stable) {
+    html {
+        overflow-y: scroll;
+    }
 }
 
 * {
