@@ -25,19 +25,19 @@ Smart Waste Mapping Platform is a full-stack, production-ready web application d
 
 The SmartWaste Platform creates a seamless bridge between concerned citizens and city administrators. Users sign up, snap a photo of a waste hotspot, and submit a report. The platform instantly runs the image through **Gemini 1.5 Flash Vision API** to classify the waste type. The report is then pinned to a global Live Map. As administrators review and resolve reports via the Overview Dashboard, reporting users are automatically awarded Impact Points, boosting their rank on the city-wide Leaderboard.
 
-## 🌐 Live Demo & Video Overview
+## 🌐 Real Website Demonstration & Video Overview
 
-📺 **[Watch Video Overview (FlexClip) →](https://www.flexclip.com/share/15578373xMqAzXKOc6FjYUDF1Pr9Ctdvz5aewCxf.html)**  
-📺 **[Watch Video Overview (ScreenApp) →](https://screenapp.io/app/v/zDsbXT1ZnQ)**
+📺 **[Watch Real Website Demo (FlexClip) →](https://www.flexclip.com/share/15578373xMqAzXKOc6FjYUDF1Pr9Ctdvz5aewCxf.html)**  
+📺 **[Watch Real Website Demo (ScreenApp) →](https://screenapp.io/app/v/zDsbXT1ZnQ)**
 
-## 🔑 Demo Credentials
-To easily test the platform's features, you can use the following pre-configured accounts:
+## 🔑 Real Account Credentials
+To test the platform's features, you can use the following real pre-configured accounts:
 
-**🛡️ Administrator Account** (Access to Overview Dashboard)
+**🛡️ Administrator Account** (Full access to Overview Dashboard)
 - **Email:** `vijay@gmail.com`
 - **Password:** `1234567890`
 
-**👤 Citizen / User Account** (Submit Reports & Earn Points)
+**👤 Citizen / User Account** (Submit Reports & Earn Impact Points)
 - **Email:** `1m1b@gmail.com`
 - **Password:** `12345678`
 
