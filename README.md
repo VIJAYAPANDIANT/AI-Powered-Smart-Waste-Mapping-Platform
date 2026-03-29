@@ -1,6 +1,8 @@
 # ♻️ Smart Waste Mapping Platform with AI Analysis
 ![Node.js](https://img.shields.io/badge/Node.js-v18+-green?logo=nodedotjs) ![Vanilla JS](https://img.shields.io/badge/Vanilla_JS-ES6+-yellow?logo=javascript) ![Supabase](https://img.shields.io/badge/Supabase-Database-3ecf8e?logo=supabase) ![Gemini AI](https://img.shields.io/badge/Google_Gemini-Vision_API-blue?logo=google)
 
+> **🌱 Proudly built for the 1M1B Green Internship Project**
+
 Smart Waste Mapping Platform is a full-stack, production-ready web application designed to empower communities to track, report, and manage waste effectively. It features a seamless mobile-friendly waste reporting workflow, Google Gemini-powered waste classification, live interactive mapping, secure authentication, and a gamified reputation system — all built with a modern tech stack and designed for a premium user experience.
 
 ## 📋 Table of Contents
