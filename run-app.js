@@ -5,8 +5,8 @@ const { spawn } = require('child_process');
 const app = express();
 const PORT = 8080;
 
-// Serve static files from the frontend directory
-app.use(express.static(path.join(__dirname, 'frontend')));
+// Serve static files from the public directory
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Start the backend server
 const backend = spawn('node', ['server.js'], {

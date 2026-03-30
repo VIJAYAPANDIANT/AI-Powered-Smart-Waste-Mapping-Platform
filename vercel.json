@@ -7,7 +7,7 @@
     },
     {
       "source": "/(.*)",
-      "destination": "/frontend/$1"
+      "destination": "/public/$1"
     }
   ],
   "cleanUrls": true

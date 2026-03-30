@@ -17,7 +17,7 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 
 // Handle static files based on environment
-const frontendPath = path.join(__dirname, '../frontend');
+const frontendPath = path.join(__dirname, '../public');
 app.use(express.static(frontendPath));
 
 app.use((req, res, next) => {
