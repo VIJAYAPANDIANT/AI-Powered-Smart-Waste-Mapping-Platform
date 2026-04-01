@@ -7,8 +7,14 @@ if (!supabaseUrl || !supabaseKey) {
     console.error('Supabase URL and Key are required in .env file');
 }
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabase = createClient(supabaseUrl, supabaseKey, {
+    auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+        detectSessionInUrl: false
+    }
+});
 
-console.log('Supabase client initialized.');
+console.log('Supabase server-side client initialized.');
 
 module.exports = supabase;

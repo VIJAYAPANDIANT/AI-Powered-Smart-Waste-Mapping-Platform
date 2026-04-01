@@ -30,12 +30,6 @@ app.use(express.static(frontendPath));
 
 
 
-// Conditional listener for local development
-if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
-    app.listen(PORT, () => {
-        console.log(`SmartWaste Server is running on http://localhost:${PORT}`);
-    });
-}
-
-// Export for Vercel
-module.exports = app;
+app.listen(PORT, () => {
+    console.log(`SmartWaste Server is running on http://localhost:${PORT}`);
+});

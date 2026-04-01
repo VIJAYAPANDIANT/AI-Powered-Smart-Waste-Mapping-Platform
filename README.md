@@ -56,6 +56,9 @@ To test the platform's features, you can use the following real pre-configured a
 - **Email:** `1m1b@gmail.com`
 - **Password:** `12345678`
 
+- **Email:** `tim@gmail.com`
+- **Password:** `1234567890`
+
 ## ✨ Features
 
 ### 1. 📸 Interactive Waste Reporting
@@ -162,29 +165,40 @@ User Registers / Logs In
 | **Google Generative AI** | Gemini 1.5 Flash Vision for Waste Classification |
 | **bcryptjs**             | Password Hashing & Security                      |
 
-## 📂 Project Structure
+## 📂 Detailed File Guide
 
-```text
-📦 AI-Powered-Smart-Waste-Mapping-Platform/
-├── 📁 backend/                    # Express.js API Server
-│   ├── 📄 server.js               # Entry point (Express app & API logic)
-│   ├── 📄 db.js                   # Supabase Client Initialization
-│   └── 📄 .env                    # Secure Keys
-│
-├── 📁 frontend/                   # Vanilla Client App
-│   ├── 📄 index.html              # Login & Register Authentication Shell
-│   ├── 📄 app.html                # Main App Shell & Home View
-│   ├── 📄 admin.html              # Overview Dashboard
-│   ├── 📄 map.html                # Live interactive Map
-│   ├── 📄 report.html             # Waste Reporting System
-│   ├── 📄 awareness.html          # Education & Leaderboard
-│   ├── 📄 router.js               # Client-side SPA routing logic
-│   ├── 📄 style.css               # Global Styling System
-│   └── 📄 ui-utils.js             # Toast & Modal Helpers
-│
-├── 📄 run-app.js                  # Unified startup script for DEV (Ports 3000 & 8080)
-└── 📄 README.md
-```
+The platform is organized into a clean decoupled architecture separating the Node.js API from the Vanilla JS frontend.
+
+### 🖥️ Backend (Node.js & Express)
+
+| File | Purpose |
+| :--- | :--- |
+| **[server.js](file:///c:/1M1B/AI-Powered-Smart-Waste-Mapping-Platform/backend/server.js)** | The primary entry point. Initializes Express, handles CORS, serves static frontend files, and mounts modular API routes. |
+| **[db.js](file:///c:/1M1B/AI-Powered-Smart-Waste-Mapping-Platform/backend/db.js)** | Centralized Supabase client configuration. Uses the `service_role` key to bypass RLS for administrative backend tasks. |
+| **[auth.js](file:///c:/1M1B/AI-Powered-Smart-Waste-Mapping-Platform/backend/routes/auth.js)** | Manages User Authentication. Features an isolated sign-in client to prevent session pollution and ensure secure profile management. |
+| **[waste.js](file:///c:/1M1B/AI-Powered-Smart-Waste-Mapping-Platform/backend/routes/waste.js)** | Core Business Logic. Handles report submissions, integrates **Google Gemini AI** for image analysis, and manages the Leaderboard. |
+
+### 🎨 Frontend (Vanilla JS SPA)
+
+| File | Purpose |
+| :--- | :--- |
+| **[index.html](file:///c:/1M1B/AI-Powered-Smart-Waste-Mapping-Platform/frontend/index.html)** | The landing and authentication gateway. Handles user login and registration flows. |
+| **[app.html](file:///c:/1M1B/AI-Powered-Smart-Waste-Mapping-Platform/frontend/app.html)** | The main application shell. Hosts the dashboard and provides the interface for navigated views. |
+| **[admin.html](file:///c:/1M1B/AI-Powered-Smart-Waste-Mapping-Platform/frontend/admin.html)** | Administrative Dashboard. Features Chart.js analytics and tools for verifying and resolving waste reports. |
+| **[map.html](file:///c:/1M1B/AI-Powered-Smart-Waste-Mapping-Platform/frontend/map.html)** | Interactive Live Map. Powered by Leaflet.js to visualize hotspots and recycling centers globally. |
+| **[report.html](file:///c:/1M1B/AI-Powered-Smart-Waste-Mapping-Platform/frontend/report.html)** | Reporting Interface. A smart form that utilizes reverse geocoding and AI classification to simplify submissions. |
+| **[awareness.html](file:///c:/1M1B/AI-Powered-Smart-Waste-Mapping-Platform/frontend/awareness.html)** | Community Hub. Contains educational materials, success stories, and the real-time Global Leaderboard. |
+| **[router.js](file:///c:/1M1B/AI-Powered-Smart-Waste-Mapping-Platform/frontend/router.js)** | SPA Engine. Manages client-side navigation and dynamic content loading without page refreshes. |
+| **[auth-ui.js](file:///c:/1M1B/AI-Powered-Smart-Waste-Mapping-Platform/frontend/auth-ui.js)** | Identity Management. Handles the profile dropdown, user state persistence, and secure logout logic. |
+| **[style.css](file:///c:/1M1B/AI-Powered-Smart-Waste-Mapping-Platform/frontend/style.css)** | Design System. Definitive OLED-black theme with glassmorphic accents and responsive layout variables. |
+| **[ui-utils.js](file:///c:/1M1B/AI-Powered-Smart-Waste-Mapping-Platform/frontend/ui-utils.js)** | UX Helpers. Standardizes cross-app components like Toast notifications and visual feedback modals. |
+
+### 🛠️ Build & Utility Scripts
+
+| File | Purpose |
+| :--- | :--- |
+| **[run-app.js](file:///c:/1M1B/AI-Powered-Smart-Waste-Mapping-Platform/run-app.js)** | Unified development runner. Launches the Express backend (3000) and can be configured to manage frontend development servers (8080). |
+| **[.env](file:///c:/1M1B/AI-Powered-Smart-Waste-Mapping-Platform/.env)** | Critical environment configuration containing API keys and database credentials. (Not included in Git). |
 
 ## 🚀 Getting Started
 
@@ -238,6 +252,15 @@ npm start
 ```
 
 - **Unified Platform:** `http://localhost:3000/` (Serves both Frontend & API)
+
+### 🛠️ Troubleshooting & Fixes
+
+#### 🔐 Authentication & RLS Fix (New)
+
+The platform now utilizes an **isolated Supabase Client** for user sign-in. This prevents "session pollution" in the shared backend client, ensuring that administrative privileges (`service_role`) are maintained for crucial database operations like profile creation and impact point awards even after a user logs in.
+
+**⚠️ Note on Server Restart:**
+If you encounter a "Server error" or "Profile could not be created" during login after an update, ensure you have **restarted your backend process** (`node backend/server.js`) to apply the latest security fixes.
 
 ## 📡 API Reference
 

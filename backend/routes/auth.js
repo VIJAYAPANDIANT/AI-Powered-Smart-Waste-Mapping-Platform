@@ -1,4 +1,5 @@
 const express = require('express');
+const { createClient } = require('@supabase/supabase-js');
 const db = require('../db');
 const router = express.Router();
 
@@ -10,13 +11,12 @@ router.post('/signup', async (req, res) => {
     }
 
     try {
-        // 1. Create user in Supabase Auth
-        const { data: authData, error: authError } = await db.auth.signUp({
+        // 1. Create user in Supabase Auth using Admin API to bypass rate limits
+        const { data: authData, error: authError } = await db.auth.admin.createUser({
             email,
             password,
-            options: {
-                data: { username } // Optional: store username in auth metadata too
-            }
+            email_confirm: true, // Automatically confirm to skip email limits
+            user_metadata: { username }
         });
 
         if (authError) {
@@ -80,8 +80,18 @@ router.post('/signin', async (req, res) => {
     }
 
     try {
-        // 1. Sign in with Supabase Auth
-        const { data: authData, error: authError } = await db.auth.signInWithPassword({
+        // 1. Sign in with Supabase Auth using a FRESH client
+        // This prevents the global 'db' from being polluted with a user session, 
+        // which would cause RLS errors in subsequent DB calls.
+        const authClient = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY, {
+            auth: {
+                persistSession: false,
+                autoRefreshToken: false,
+                detectSessionInUrl: false
+            }
+        });
+
+        const { data: authData, error: authError } = await authClient.auth.signInWithPassword({
             email,
             password
         });
@@ -92,15 +102,63 @@ router.post('/signin', async (req, res) => {
         }
 
         // 2. Fetch profile from 'users' table
-        const { data: user, error: profileError } = await db
+        let { data: user, error: profileError } = await db
             .from('users')
             .select('*')
             .eq('id', authData.user.id)
             .single();
 
         if (profileError) {
-            console.error("Profile fetch error:", profileError);
-            return res.status(500).json({ error: "Login successful but profile not found." });
+            // Handle Case: User exists in Auth but not in 'users' table by ID
+            if (profileError.code === 'PGRST116') {
+                // First, check if the email already exists with a different old UUID
+                const { data: existingByEmail } = await db
+                    .from('users')
+                    .select('*')
+                    .eq('email', authData.user.email)
+                    .single();
+
+                if (existingByEmail) {
+                    console.warn(`UUID desync detected for ${authData.user.email}. Re-linking profile...`);
+                    // Update the users table to the new Auth UUID
+                    const { data: updatedProfile, error: updateError } = await db
+                        .from('users')
+                        .update({ id: authData.user.id })
+                        .eq('email', authData.user.email)
+                        .select()
+                        .single();
+
+                    if (updateError) {
+                        console.error("Profile re-linking failed:", updateError);
+                        return res.status(500).json({ error: "Login successful but profile could not be re-linked." });
+                    }
+                    user = updatedProfile;
+                } else {
+                    console.warn(`Profile missing for user ${authData.user.email} (${authData.user.id}). Auto-creating...`);
+                    
+                    const { data: newProfile, error: createError } = await db
+                        .from('users')
+                        .insert([
+                            { 
+                                id: authData.user.id, 
+                                username: authData.user.user_metadata?.username || authData.user.email.split('@')[0], 
+                                email: authData.user.email,
+                                role: 'user' 
+                            }
+                        ])
+                        .select()
+                        .single();
+
+                    if (createError) {
+                        console.error("Auto-profile creation failed:", createError);
+                        return res.status(500).json({ error: "Login successful but profile could not be created." });
+                    }
+                    user = newProfile;
+                }
+            } else {
+                console.error("Profile fetch error:", profileError);
+                return res.status(500).json({ error: "Login successful but profile not found." });
+            }
         }
 
         res.json({ 
