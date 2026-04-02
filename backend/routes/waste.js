@@ -234,4 +234,27 @@ router.delete('/report/:id', async (req, res) => {
     }
 });
 
+// DELETE /reports/all - Clear all waste reports
+router.delete('/reports/all', async (req, res) => {
+    try {
+        const { role } = req.body || {};
+        
+        // Basic Authorization Check
+        if (role !== 'admin') {
+            return res.status(403).json({ error: "Unauthorized: Admin access required" });
+        }
+
+        const { error } = await db
+            .from('waste_reports')
+            .delete()
+            .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all rows where id is not dummy (effectively all)
+
+        if (error) throw error;
+        res.status(200).json({ message: "All reports cleared successfully" });
+    } catch (error) {
+        console.error("Error clearing all reports:", error);
+        res.status(500).json({ error: "Failed to clear reports: " + error.message });
+    }
+});
+
 module.exports = router;

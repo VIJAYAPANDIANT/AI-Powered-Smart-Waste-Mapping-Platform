@@ -10,6 +10,10 @@ let lastReports = [];
 function initAdmin() {
     loadDashboard();
     document.getElementById('exportCsvBtn').addEventListener('click', exportToCSV);
+    const clearBtn = document.getElementById('clearAllBtn');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', clearAllReports);
+    }
     const seedBtn = document.getElementById('seedDataBtn');
     if (seedBtn) {
         seedBtn.addEventListener('click', async () => {
@@ -89,11 +93,20 @@ function renderHotspotChart(reports) {
 
     const locationCounts = {};
     reports.forEach(r => {
-        locationCounts[r.location] = (locationCounts[r.location] || 0) + 1;
+        // Simplify/Truncate long location names
+        let loc = r.location || 'Unknown';
+        if (loc.length > 25) {
+            loc = loc.substring(0, 22) + '...';
+        }
+        locationCounts[loc] = (locationCounts[loc] || 0) + 1;
     });
 
-    const labels = Object.keys(locationCounts);
-    const data = Object.values(locationCounts);
+    // Sort locations by count descending
+    const sortedLocations = Object.entries(locationCounts)
+        .sort((a, b) => b[1] - a[1]);
+
+    const labels = sortedLocations.map(item => item[0]);
+    const data = sortedLocations.map(item => item[1]);
 
     if (hotspotChart) hotspotChart.destroy();
 
@@ -103,7 +116,10 @@ function renderHotspotChart(reports) {
             labels: labels,
             datasets: [{
                 data: data,
-                backgroundColor: ['#2563eb', '#3b82f6', '#10b981', '#ef4444', '#f59e0b', '#6366f1']
+                backgroundColor: [
+                    '#2563eb', '#3b82f6', '#10b981', '#ef4444', '#f59e0b', '#6366f1',
+                    '#8b5cf6', '#ec4899', '#14b8a6', '#f43f5e', '#06b6d4', '#fbbf24'
+                ]
             }]
         },
         options: { 
@@ -111,18 +127,42 @@ function renderHotspotChart(reports) {
             maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    position: 'top',
-                    align: 'start',
+                    position: 'right',
+                    align: 'center',
                     labels: {
                         color: '#94a3b8',
-                        font: { family: 'Inter', size: 11 },
-                        padding: 15,
-                        boxWidth: 12
+                        font: { family: 'Inter', size: 10 },
+                        padding: 10,
+                        boxWidth: 10
                     }
                 }
             }
         }
     });
+}
+
+async function clearAllReports() {
+    const confirmed = await showConfirm('Clear All Data', 'DANGER: This will permanently delete ALL waste reports. Continue?');
+    if (confirmed) {
+        const user = JSON.parse(localStorage.getItem('user'));
+        try {
+            const response = await fetch('/reports/all', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ role: user ? user.role : 'user' })
+            });
+            if (response.ok) {
+                showToast('All reports cleared successfully');
+                loadDashboard();
+            } else {
+                const err = await response.json();
+                showToast(err.error || 'Failed to clear reports', 'error');
+            }
+        } catch (error) {
+            console.error("Error clearing reports:", error);
+            showToast('Failed to clear reports', 'error');
+        }
+    }
 }
 
 function renderStatusChart(reports) {
