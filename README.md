@@ -120,7 +120,8 @@ The platform is built with two distinct experiences tailored to community member
 
 - **Dedicated Dashboard:** Access a secure Overview Dashboard to monitor all incoming waste reports.
 - **Review & Resolve:** Verify pending hotspots, schedule cleanups, and update report statuses to "Resolved" when finished.
-- **Analyze Data:** Track city-wide metrics through live Chart.js visualizations showing category distributions and resolution efficiency.
+- **Analyze Full Data:** Track city-wide metrics through live Chart.js visualizations that now support full-dataset rendering with scrollable legend support for diverse locations.
+- **High-Volume Data Support:** The dashboard is optimized to "Show All" data by default, featuring scrollable table containers to handle hundreds of reports gracefully.
 - **Community Management:** Keep citizens engaged by safely updating their impact scores upon task completion.
 
 ## ⚙️ How It Works
@@ -195,9 +196,8 @@ The platform is organized into a clean decoupled architecture separating the Nod
 
 ### 🛠️ Build & Utility Scripts
 
-| File                                                                                 | Purpose                                                                                                                              |
-| :----------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------- |
-| **[run-app.js](file:///c:/1M1B/AI-Powered-Smart-Waste-Mapping-Platform/run-app.js)** | Unified development runner. Launches the Express backend (3000) and can be configured to manage frontend development servers (8080). |
+| **[seed-data.js](file:///c:/1M1B/AI-Powered-Smart-Waste-Mapping-Platform/backend/seed-data.js)** | Data Seeder. Populates the database with 150+ sample reports for testing the "Show All" dashboard logic. |
+| **[check-leaderboard.js](file:///c:/1M1B/AI-Powered-Smart-Waste-Mapping-Platform/backend/check-leaderboard.js)** | Leaderboard Auditor. A CLI utility to verify that the impact score ranking is fetching the full community list. |
 | **[.env](file:///c:/1M1B/AI-Powered-Smart-Waste-Mapping-Platform/.env)**             | Critical environment configuration containing API keys and database credentials. (Not included in Git).                              |
 
 ## 🚀 Getting Started
