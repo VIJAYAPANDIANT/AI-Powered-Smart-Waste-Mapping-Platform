@@ -119,7 +119,7 @@ window.addEventListener('themeChanged', (e) => {
 async function loadReports() {
     try {
         // Use relative path to work on any host/port
-        const response = await fetch('/reports');
+        const response = await fetch(`${API_BASE_URL}/reports`);
         const reports = await response.json();
 
         displayReports(reports);

@@ -85,7 +85,7 @@ function initReport() {
         const reader = new FileReader();
         reader.onloadend = async () => {
             try {
-                const response = await fetch('/analyzeWaste', {
+                const response = await fetch(`${API_BASE_URL}/analyzeWaste`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ imageBase64: reader.result })
@@ -143,7 +143,7 @@ function initReport() {
             };
 
             try {
-                const response = await fetch('/reportWaste', {
+                const response = await fetch(`${API_BASE_URL}/reportWaste`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(reportData)

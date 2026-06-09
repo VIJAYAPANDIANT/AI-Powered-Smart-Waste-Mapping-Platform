@@ -1,11 +1,11 @@
 {
-  "name": "smart-waste-mapping-platform",
+  "name": "smart-waste-mapping-platform-backend",
   "version": "1.0.0",
-  "description": "Unified runner for SmartWaste Mapping Platform",
-  "main": "backend/server.js",
+  "description": "Backend API for SmartWaste Mapping Platform",
+  "main": "server.js",
   "scripts": {
-    "start": "node backend/server.js",
-    "dev": "node backend/server.js",
+    "start": "node server.js",
+    "dev": "node server.js",
     "build": "echo 'Building...'"
   },
   "dependencies": {

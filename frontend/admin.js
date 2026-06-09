@@ -22,7 +22,7 @@ function initAdmin() {
                 seedBtn.disabled = true;
                 seedBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Seeding...';
                 try {
-                    const response = await fetch('/seed', { method: 'POST' });
+                    const response = await fetch(`${API_BASE_URL}/seed`, { method: 'POST' });
                     if (response.ok) {
                         showToast('Sample data added successfully!');
                         loadDashboard();
@@ -41,7 +41,7 @@ function initAdmin() {
 
 async function loadDashboard() {
     try {
-        const response = await fetch('/reports');
+        const response = await fetch(`${API_BASE_URL}/reports`);
         const reports = await response.json();
         lastReports = reports;
 
@@ -146,7 +146,7 @@ async function clearAllReports() {
     if (confirmed) {
         const user = JSON.parse(localStorage.getItem('user'));
         try {
-            const response = await fetch('/reports/all', {
+            const response = await fetch(`${API_BASE_URL}/reports/all`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ role: user ? user.role : 'user' })
@@ -301,7 +301,7 @@ async function deleteReport(id) {
     const confirmed = await showConfirm('Delete Report', 'Are you sure you want to delete this report?');
     if (confirmed) {
         try {
-            const response = await fetch(`/report/${id}`, {
+            const response = await fetch(`${API_BASE_URL}/report/${id}`, {
                 method: 'DELETE'
             });
             if (response.ok) {
@@ -320,7 +320,7 @@ async function approveReport(id) {
     if (confirmed) {
         const user = JSON.parse(localStorage.getItem('user'));
         try {
-            const response = await fetch(`/report/${id}/status`, {
+            const response = await fetch(`${API_BASE_URL}/report/${id}/status`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 

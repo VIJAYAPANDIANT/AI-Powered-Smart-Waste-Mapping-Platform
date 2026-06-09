@@ -11,7 +11,7 @@ async function loadLeaderboard() {
     if (!listEl) return;
 
     try {
-        const response = await fetch('/leaderboard');
+        const response = await fetch(`${API_BASE_URL}/leaderboard`);
         if (!response.ok) {
             const err = await response.json();
             throw new Error(err.error || 'Server error');
