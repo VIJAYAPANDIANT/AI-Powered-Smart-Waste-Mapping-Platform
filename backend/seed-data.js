@@ -1,7 +1,4 @@
-require('dotenv').config();
-const { createClient } = require('@supabase/supabase-js');
-
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
+const db = require('./db');
 
 const locations = [
     { name: "Koramangala", lat: 12.9352, lng: 77.6245 },
@@ -47,20 +44,23 @@ const generateRichData = (count) => {
 async function seedData() {
     const dataSize = 150;
     const richData = generateRichData(dataSize);
-    console.log(`🚀 Seeding ${dataSize} rich analytics records to Supabase...`);
+    console.log(`🚀 Seeding ${dataSize} rich analytics records to SQLite...`);
     
-    // Insert in batches of 50 to avoid any limits
-    for (let i = 0; i < richData.length; i += 50) {
-        const batch = richData.slice(i, i + 50);
-        const { error } = await supabase.from('waste_reports').insert(batch);
-        if (error) {
-            console.error(`❌ Error seeding batch ${i/50 + 1}:`, error.message);
-        } else {
-            console.log(`✅ Batch ${i/50 + 1} complete...`);
+    try {
+        await db.runAsync('BEGIN TRANSACTION');
+        for (const item of richData) {
+            await db.runAsync(
+                'INSERT INTO waste_reports (location, latitude, longitude, description, status, report_id, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                [item.location, item.latitude, item.longitude, item.description, item.status, item.report_id, item.timestamp]
+            );
         }
+        await db.runAsync('COMMIT');
+        console.log('\n🌟 Seeding complete! Check your updated Admin Dashboard.');
+    } catch (error) {
+        await db.runAsync('ROLLBACK');
+        console.error('❌ Error seeding data:', error.message);
     }
-    
-    console.log('\n🌟 Seeding complete! Check your updated Admin Dashboard.');
+    process.exit(0);
 }
 
-seedData();
+setTimeout(seedData, 500);

@@ -53,16 +53,7 @@ router.post('/analyzeWaste', async (req, res) => {
 // GET /reports - Fetch all reported waste
 router.get('/reports', async (req, res) => {
     try {
-        const { data: reports, error } = await db
-            .from('waste_reports')
-            .select('*')
-            .order('timestamp', { ascending: false });
-
-        if (error) {
-            console.error("Supabase select error:", error);
-            return res.status(500).json({ error: "Failed to fetch reports" });
-        }
-
+        const reports = await db.allAsync('SELECT * FROM waste_reports ORDER BY timestamp DESC');
         res.status(200).json(reports || []);
     } catch (error) {
         console.error("Error fetching reports:", error);
@@ -74,31 +65,29 @@ router.get('/reports', async (req, res) => {
 router.post('/reportWaste', async (req, res) => {
     try {
         const { location, latitude, longitude, description, photo_url, timestamp, status, user_id, category } = req.body;
-        const newReport = {
-            location,
-            latitude: parseFloat(latitude),
-            longitude: parseFloat(longitude),
-            description,
-            photo_url,
-            category,
-            timestamp: timestamp || new Date().toISOString(),
-            status: status || 'pending',
-            report_id: `REP-${Date.now()}`,
-            user_id: user_id || null
-        };
         
-        const { data, error } = await db
-            .from('waste_reports')
-            .insert([newReport])
-            .select()
-            .single();
+        const timestampVal = timestamp || new Date().toISOString();
+        const statusVal = status || 'pending';
+        const reportIdVal = `REP-${Date.now()}`;
+        const userIdVal = user_id || null;
 
-        if (error) {
-            console.error("Supabase insert error:", error);
-            return res.status(500).json({ error: "Failed to save report" });
-        }
+        const result = await db.runAsync(
+            'INSERT INTO waste_reports (location, latitude, longitude, description, photo_url, category, timestamp, status, report_id, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [
+                location,
+                parseFloat(latitude),
+                parseFloat(longitude),
+                description,
+                photo_url,
+                category,
+                timestampVal,
+                statusVal,
+                reportIdVal,
+                userIdVal
+            ]
+        );
 
-        res.status(201).json({ message: "Report saved successfully", id: data.id });
+        res.status(201).json({ message: "Report saved successfully", id: result.id });
     } catch (error) {
         console.error("Error saving report:", error);
         res.status(500).json({ error: "Failed to save report" });
@@ -120,35 +109,22 @@ router.put('/report/:id/status', async (req, res) => {
             return res.status(403).json({ error: "Unauthorized: Admin access required" });
         }
 
-        // Fetch the report to get user_id before updating
-        const { data: report, error: fetchError } = await db
-            .from('waste_reports')
-            .select('user_id, status')
-            .eq('id', id)
-            .single();
-
-        if (fetchError) throw fetchError;
+        // Fetch the report to get user_id and current status before updating
+        const report = await db.getAsync('SELECT user_id, status FROM waste_reports WHERE id = ?', [id]);
+        if (!report) {
+            return res.status(404).json({ error: "Report not found" });
+        }
 
         // Update status
-        const { error: updateError } = await db
-            .from('waste_reports')
-            .update({ status })
-            .eq('id', id);
-
-        if (updateError) throw updateError;
+        await db.runAsync('UPDATE waste_reports SET status = ? WHERE id = ?', [status, id]);
 
         // Gamification: Award 50 points if marked as 'resolved'
         if (status === 'resolved' && report.status !== 'resolved' && report.user_id) {
             console.log(`Awarding 50 points to user ${report.user_id}`);
-            const { error: pointsError } = await db.rpc('increment_impact_score', { 
-                target_user_id: report.user_id, 
-                points: 50 
-            });
-            
-            if (pointsError) {
-                console.warn("RPC failed, attempting direct update:", pointsError.message);
-                const { data: userData } = await db.from('users').select('impact_score').eq('id', report.user_id).single();
-                await db.from('users').update({ impact_score: (userData.impact_score || 0) + 50 }).eq('id', report.user_id);
+            const userData = await db.getAsync('SELECT impact_score FROM users WHERE id = ?', [report.user_id]);
+            if (userData) {
+                const newScore = (userData.impact_score || 0) + 50;
+                await db.runAsync('UPDATE users SET impact_score = ? WHERE id = ?', [newScore, report.user_id]);
             }
         }
 
@@ -159,16 +135,11 @@ router.put('/report/:id/status', async (req, res) => {
     }
 });
 
-// GET /leaderboard - Fetch top 10 contributors
+// GET /leaderboard - Fetch contributors ordered by impact_score
 router.get('/leaderboard', async (req, res) => {
     try {
-        const { data, error } = await db
-            .from('users')
-            .select('id, username, impact_score')
-            .order('impact_score', { ascending: false });
-
-        if (error) throw error;
-        res.status(200).json(data);
+        const data = await db.allAsync('SELECT id, username, impact_score FROM users ORDER BY impact_score DESC');
+        res.status(200).json(data || []);
     } catch (error) {
         console.error("Leaderboard fetch error:", error);
         res.status(500).json({ error: "Failed to fetch leaderboard" });
@@ -207,8 +178,12 @@ router.post('/seed', async (req, res) => {
             });
         }
 
-        const { error } = await db.from('waste_reports').insert(seedData);
-        if (error) throw error;
+        for (const report of seedData) {
+            await db.runAsync(
+                'INSERT INTO waste_reports (location, latitude, longitude, description, status, report_id, timestamp, category) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                [report.location, report.latitude, report.longitude, report.description, report.status, report.report_id, report.timestamp, report.category]
+            );
+        }
 
         res.status(200).json({ message: "Successfully seeded 20 sample reports" });
     } catch (error) {
@@ -221,12 +196,7 @@ router.post('/seed', async (req, res) => {
 router.delete('/report/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const { error } = await db
-            .from('waste_reports')
-            .delete()
-            .eq('id', id);
-
-        if (error) throw error;
+        await db.runAsync('DELETE FROM waste_reports WHERE id = ?', [id]);
         res.status(200).json({ message: "Report deleted successfully" });
     } catch (error) {
         console.error("Error deleting report:", error);
@@ -244,12 +214,7 @@ router.delete('/reports/all', async (req, res) => {
             return res.status(403).json({ error: "Unauthorized: Admin access required" });
         }
 
-        const { error } = await db
-            .from('waste_reports')
-            .delete()
-            .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all rows where id is not dummy (effectively all)
-
-        if (error) throw error;
+        await db.runAsync('DELETE FROM waste_reports');
         res.status(200).json({ message: "All reports cleared successfully" });
     } catch (error) {
         console.error("Error clearing all reports:", error);

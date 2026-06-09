@@ -1,57 +1,32 @@
 const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '../.env') });
-const { createClient } = require('@supabase/supabase-js');
-
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
-
-if (!supabaseUrl || !supabaseKey) {
-    console.error('❌ Error: SUPABASE_URL and SUPABASE_SERVICE_KEY are missing in .env file');
-    process.exit(1);
-}
-
-const supabase = createClient(supabaseUrl, supabaseKey);
+const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
+const db = require('./db');
 
 async function createAdmin(username, email, password) {
-    console.log(`⏳ Creating admin user in Supabase Auth: ${username} (${email})...`);
+    console.log(`⏳ Creating admin user in SQLite: ${username} (${email})...`);
     
     try {
-        // 1. Create Auth user
-        const { data: authData, error: authError } = await supabase.auth.admin.createUser({
-            email: email,
-            password: password,
-            email_confirm: true,
-            user_metadata: { username }
-        });
-
-        if (authError) {
-            console.error('❌ Error creating auth user:', authError.message);
-            if (authError.message.includes('User already registered')) {
-                console.log('👉 Tip: If user exists in Auth but not in users table, check your database.');
-            }
-            return;
+        const existingUser = await db.getAsync('SELECT * FROM users WHERE email = ?', [email]);
+        if (existingUser) {
+            console.log('❌ Error: User with this email already exists.');
+            process.exit(1);
         }
 
-        console.log(`✅ Auth user created. Now creating profile in "users" table...`);
+        const userId = crypto.randomUUID();
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-        // 2. Create profile in users table
-        const { data, error } = await supabase
-            .from('users')
-            .insert([
-                { id: authData.user.id, username, email, role: 'admin' }
-            ])
-            .select()
-            .single();
+        await db.runAsync(
+            'INSERT INTO users (id, username, email, role, password, impact_score) VALUES (?, ?, ?, ?, ?, ?)',
+            [userId, username, email, 'admin', hashedPassword, 0]
+        );
 
-        if (error) {
-            console.error('❌ Error creating profile:', error.message);
-        } else {
-            console.log(`✅ Admin profile "${data.username}" created successfully with ID: ${data.id}`);
-            console.log('You can now log in at your deployed Vercel URL or http://localhost:3000');
-        }
+        console.log(`✅ Admin profile "${username}" created successfully with ID: ${userId}`);
+        console.log('You can now log in at http://localhost:3000');
     } catch (err) {
         console.error('❌ Unexpected error:', err.message);
     }
+    process.exit(0);
 }
 
 // Usage: node create-admin.js <username> <email> <password>
@@ -59,6 +34,8 @@ const args = process.argv.slice(2);
 if (args.length < 3) {
     console.log('Usage: node create-admin.js <username> <email> <password>');
     console.log('Example: node create-admin.js myadmin admin@test.com secret123');
+    process.exit(1);
 } else {
-    createAdmin(args[0], args[1], args[2]);
+    // Wait a brief moment for database initialization
+    setTimeout(() => createAdmin(args[0], args[1], args[2]), 500);
 }

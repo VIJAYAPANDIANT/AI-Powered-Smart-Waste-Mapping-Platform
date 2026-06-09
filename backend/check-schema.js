@@ -1,33 +1,30 @@
 const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '../.env') });
-const { createClient } = require('@supabase/supabase-js');
-
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
+const db = require('./db');
 
 async function checkSchema() {
-    console.log("--- Detailed Schema & User Check ---");
+    console.log("--- Detailed SQLite Schema & User Check ---");
     try {
-        const { data: users, error } = await supabase.from('users').select('*');
+        const users = await db.allAsync('SELECT * FROM users');
         
-        if (error) {
-            console.error("❌ Error fetching users:", error.message);
-        } else {
-            console.log(`✅ Found ${users.length} users in 'public.users' table:`);
-            users.forEach(u => {
-                console.log(`- ID: ${u.id}, Email: ${u.email}, Role: ${u.role}, Username: ${u.username}`);
+        console.log(`✅ Found ${users.length} users in 'users' table:`);
+        users.forEach(u => {
+            console.log(`- ID: ${u.id}, Email: ${u.email}, Role: ${u.role}, Username: ${u.username}, Impact Score: ${u.impact_score}`);
+        });
+        
+        if (users.length > 0) {
+            console.log("\nColumn Types (first row):");
+            Object.keys(users[0]).forEach(key => {
+                console.log(`- ${key}: ${typeof users[0][key]} (value: ${users[0][key]})`);
             });
-            
-            if (users.length > 0) {
-                console.log("\nColumn Types (first row):");
-                Object.keys(users[0]).forEach(key => {
-                    console.log(`- ${key}: ${typeof users[0][key]}`);
-                });
-            }
         }
+
+        const reports = await db.allAsync('SELECT COUNT(*) as count FROM waste_reports');
+        console.log(`\n✅ Found ${reports[0].count} reports in 'waste_reports' table.`);
     } catch (e) {
         console.error("Failure:", e.message);
     }
     process.exit(0);
 }
 
-checkSchema();
+// Wait a bit for DB schema init to complete
+setTimeout(checkSchema, 500);

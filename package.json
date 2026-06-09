@@ -5,14 +5,15 @@
   "main": "backend/server.js",
   "scripts": {
     "start": "node backend/server.js",
+    "dev": "node backend/server.js",
     "build": "echo 'Building...'"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
-    "@supabase/supabase-js": "^2.10.1",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "sqlite3": "^6.0.1"
   }
 }
