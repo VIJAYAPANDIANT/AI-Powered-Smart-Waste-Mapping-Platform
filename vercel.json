@@ -1,0 +1,13 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/(signup|signin|reports|reportWaste|report/:id|report/:id/status|leaderboard|seed|reports/all|analyzeWaste)",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/:path*",
+      "destination": "/frontend/:path*"
+    }
+  ]
+}
