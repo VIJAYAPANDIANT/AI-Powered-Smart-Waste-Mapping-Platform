@@ -13,7 +13,7 @@
   ],
   "rewrites": [
     {
-      "source": "/(signup|signin|reports|reportWaste|report/:id|report/:id/status|leaderboard|seed|reports/all|analyzeWaste)",
+      "source": "/(.*)",
       "destination": "/api/index.js"
     }
   ]

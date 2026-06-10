@@ -24,6 +24,15 @@ app.use((req, res, next) => {
 app.use('/', authRoutes);
 app.use('/', wasteRoutes);
 
+// Root route health check
+app.get('/', (req, res) => {
+    res.json({
+        status: 'success',
+        message: 'Smart Waste Mapping Platform Backend API is running successfully!',
+        timestamp: new Date().toISOString()
+    });
+});
+
 // 2. Handle Static Files (Frontend)
 const frontendPath = path.join(__dirname, '../frontend');
 app.use(express.static(frontendPath));
