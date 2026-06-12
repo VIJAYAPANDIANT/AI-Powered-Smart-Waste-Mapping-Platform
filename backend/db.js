@@ -5,6 +5,20 @@ const fs = require('fs');
 const dbPath = process.env.VERCEL
     ? path.join('/tmp', 'database.sqlite')
     : path.join(__dirname, 'database.sqlite');
+
+// Copy template database to /tmp in Vercel environment so pre-existing data (users, reports) is preserved
+if (process.env.VERCEL) {
+    const templatePath = path.join(__dirname, 'database.sqlite');
+    if (fs.existsSync(templatePath) && !fs.existsSync(dbPath)) {
+        try {
+            fs.copyFileSync(templatePath, dbPath);
+            console.log('Successfully copied template database.sqlite to /tmp');
+        } catch (err) {
+            console.error('Error copying template database to /tmp:', err.message);
+        }
+    }
+}
+
 const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
         console.error('Error opening database:', err.message);
