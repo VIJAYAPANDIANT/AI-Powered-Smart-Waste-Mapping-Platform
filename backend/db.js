@@ -1,150 +1,121 @@
-const initSqlJs = require('sql.js');
+const alasql = require('alasql');
 const path = require('path');
 const fs = require('fs');
 
 const dbPath = process.env.VERCEL
-    ? path.join('/tmp', 'database.sqlite')
-    : path.join(__dirname, 'database.sqlite');
+    ? path.join('/tmp', 'database.json')
+    : path.join(__dirname, 'database.json');
 
-// Copy template database to /tmp in Vercel environment so pre-existing data is preserved
-if (process.env.VERCEL) {
-    const templatePath = path.join(__dirname, 'database.sqlite');
-    if (fs.existsSync(templatePath) && !fs.existsSync(dbPath)) {
+let dbInitialized = false;
+
+function initDb() {
+    if (dbInitialized) return;
+
+    console.log('Initializing Alasql Database...');
+
+    // 1. Copy database.json template to /tmp on Vercel if it doesn't exist yet
+    if (process.env.VERCEL) {
+        const templatePath = path.join(__dirname, 'database.json');
+        if (fs.existsSync(templatePath) && !fs.existsSync(dbPath)) {
+            try {
+                fs.copyFileSync(templatePath, dbPath);
+                console.log('Successfully copied template database.json to /tmp');
+            } catch (err) {
+                console.error('Error copying template database.json to /tmp:', err.message);
+            }
+        }
+    }
+
+    // 2. Create tables
+    alasql("CREATE TABLE IF NOT EXISTS users (id STRING PRIMARY KEY, username STRING, email STRING, role STRING, impact_score INT, password STRING)");
+    alasql("CREATE TABLE IF NOT EXISTS waste_reports (id INT IDENTITY(1,1) PRIMARY KEY, location STRING, latitude REAL, longitude REAL, description STRING, photo_url STRING, category STRING, timestamp STRING, status STRING, report_id STRING, user_id STRING)");
+
+    // 3. Load existing data if file exists
+    if (fs.existsSync(dbPath)) {
         try {
-            fs.copyFileSync(templatePath, dbPath);
-            console.log('Successfully copied template database.sqlite to /tmp');
+            const rawData = fs.readFileSync(dbPath, 'utf8');
+            const data = JSON.parse(rawData);
+            if (data.users && Array.isArray(data.users)) {
+                alasql.tables.users.data = data.users;
+            }
+            if (data.waste_reports && Array.isArray(data.waste_reports)) {
+                alasql.tables.waste_reports.data = data.waste_reports;
+                // Update identity/autoincrement sequence counter to avoid ID conflicts
+                let maxId = 0;
+                data.waste_reports.forEach(r => {
+                    const nid = parseInt(r.id);
+                    if (!isNaN(nid) && nid > maxId) maxId = nid;
+                });
+                alasql.tables.waste_reports.identities = { id: { value: maxId } };
+            }
+            console.log(`Loaded ${alasql.tables.users.data.length} users and ${alasql.tables.waste_reports.data.length} reports from JSON file.`);
         } catch (err) {
-            console.error('Error copying template database to /tmp:', err.message);
+            console.error('Error loading data from database.json:', err.message);
         }
     }
+
+    dbInitialized = true;
 }
 
-// Global reference to SQL instance and loaded DB in memory
-let SQL;
-let sqlDb;
-
-async function getDb() {
-    if (!SQL) {
-        SQL = await initSqlJs();
-    }
-    if (!sqlDb) {
-        let fileBuffer = null;
-        if (fs.existsSync(dbPath)) {
-            fileBuffer = fs.readFileSync(dbPath);
-        }
-        sqlDb = fileBuffer ? new SQL.Database(fileBuffer) : new SQL.Database();
-    }
-    return sqlDb;
-}
-
-// Save memory DB to file
 function persistDb() {
-    if (sqlDb) {
-        const data = sqlDb.export();
-        fs.writeFileSync(dbPath, Buffer.from(data));
+    try {
+        const data = {
+            users: alasql("SELECT * FROM users"),
+            waste_reports: alasql("SELECT * FROM waste_reports")
+        };
+        fs.writeFileSync(dbPath, JSON.stringify(data, null, 2), 'utf8');
+    } catch (err) {
+        console.error('Error persisting database to file:', err.message);
     }
 }
 
 const db = {};
 
 db.runAsync = async function (sql, params = []) {
-    const database = await getDb();
+    initDb();
     try {
-        const stmt = database.prepare(sql);
-        stmt.bind(params);
-        stmt.step();
-        stmt.free();
-
-        // Get last insert ID and changes
-        const lastInsertIdResult = database.exec("SELECT last_insert_rowid() AS id");
-        const lastID = lastInsertIdResult[0].values[0][0];
-
-        const changesResult = database.exec("SELECT changes() AS changes");
-        const changes = changesResult[0].values[0][0];
+        const isInsert = sql.trim().toUpperCase().startsWith('INSERT');
+        
+        const res = alasql(sql, params);
+        
+        let lastID = null;
+        if (isInsert) {
+            const maxIdRes = alasql("SELECT MAX(id) AS id FROM waste_reports");
+            lastID = maxIdRes && maxIdRes[0] ? maxIdRes[0].id : null;
+        }
 
         persistDb();
 
-        return { id: lastID, changes: changes };
+        return { id: lastID, changes: Array.isArray(res) ? res.length : res };
     } catch (err) {
-        console.error("SQL.js runAsync Error:", err);
+        console.error("AlaSQL runAsync Error:", err);
         throw err;
     }
 };
 
 db.getAsync = async function (sql, params = []) {
-    const database = await getDb();
+    initDb();
     try {
-        const stmt = database.prepare(sql);
-        stmt.bind(params);
-        let result = null;
-        if (stmt.step()) {
-            result = stmt.getAsObject();
-        }
-        stmt.free();
-        if (result && Object.keys(result).length === 0) {
-            return null;
-        }
-        return result;
+        const res = alasql(sql, params);
+        return (res && res.length > 0) ? res[0] : null;
     } catch (err) {
-        console.error("SQL.js getAsync Error:", err);
+        console.error("AlaSQL getAsync Error:", err);
         throw err;
     }
 };
 
 db.allAsync = async function (sql, params = []) {
-    const database = await getDb();
+    initDb();
     try {
-        const stmt = database.prepare(sql);
-        stmt.bind(params);
-        const rows = [];
-        while (stmt.step()) {
-            rows.push(stmt.getAsObject());
-        }
-        stmt.free();
-        return rows;
+        const res = alasql(sql, params);
+        return res || [];
     } catch (err) {
-        console.error("SQL.js allAsync Error:", err);
+        console.error("AlaSQL allAsync Error:", err);
         throw err;
     }
 };
 
-// Initialize schema
-const initSchema = async () => {
-    try {
-        await db.runAsync(`
-            CREATE TABLE IF NOT EXISTS users (
-                id TEXT PRIMARY KEY,
-                username TEXT NOT NULL,
-                email TEXT UNIQUE NOT NULL,
-                role TEXT DEFAULT 'user',
-                impact_score INTEGER DEFAULT 0,
-                password TEXT
-            )
-        `);
-
-        await db.runAsync(`
-            CREATE TABLE IF NOT EXISTS waste_reports (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                location TEXT,
-                latitude REAL,
-                longitude REAL,
-                description TEXT,
-                photo_url TEXT,
-                category TEXT,
-                timestamp TEXT,
-                status TEXT DEFAULT 'pending',
-                report_id TEXT,
-                user_id TEXT,
-                FOREIGN KEY(user_id) REFERENCES users(id)
-            )
-        `);
-        console.log('SQL.js SQLite schema initialized.');
-    } catch (err) {
-        console.error('Schema initialization error:', err.message);
-    }
-};
-
 // Run initialization
-initSchema();
+initDb();
 
 module.exports = db;
