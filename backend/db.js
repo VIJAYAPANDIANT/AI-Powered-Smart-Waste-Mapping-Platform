@@ -1,4 +1,4 @@
-const sqlite3 = require('sqlite3').verbose();
+const initSqlJs = require('sql.js');
 const path = require('path');
 const fs = require('fs');
 
@@ -6,7 +6,7 @@ const dbPath = process.env.VERCEL
     ? path.join('/tmp', 'database.sqlite')
     : path.join(__dirname, 'database.sqlite');
 
-// Copy template database to /tmp in Vercel environment so pre-existing data (users, reports) is preserved
+// Copy template database to /tmp in Vercel environment so pre-existing data is preserved
 if (process.env.VERCEL) {
     const templatePath = path.join(__dirname, 'database.sqlite');
     if (fs.existsSync(templatePath) && !fs.existsSync(dbPath)) {
@@ -19,40 +19,93 @@ if (process.env.VERCEL) {
     }
 }
 
-const db = new sqlite3.Database(dbPath, (err) => {
-    if (err) {
-        console.error('Error opening database:', err.message);
-    } else {
-        console.log('Connected to the SQLite database at:', dbPath);
+// Global reference to SQL instance and loaded DB in memory
+let SQL;
+let sqlDb;
+
+async function getDb() {
+    if (!SQL) {
+        SQL = await initSqlJs();
     }
-});
+    if (!sqlDb) {
+        let fileBuffer = null;
+        if (fs.existsSync(dbPath)) {
+            fileBuffer = fs.readFileSync(dbPath);
+        }
+        sqlDb = fileBuffer ? new SQL.Database(fileBuffer) : new SQL.Database();
+    }
+    return sqlDb;
+}
 
-// Helper functions for promise-based database operations
-db.runAsync = function (sql, params = []) {
-    return new Promise((resolve, reject) => {
-        db.run(sql, params, function (err) {
-            if (err) reject(err);
-            else resolve({ id: this.lastID, changes: this.changes });
-        });
-    });
+// Save memory DB to file
+function persistDb() {
+    if (sqlDb) {
+        const data = sqlDb.export();
+        fs.writeFileSync(dbPath, Buffer.from(data));
+    }
+}
+
+const db = {};
+
+db.runAsync = async function (sql, params = []) {
+    const database = await getDb();
+    try {
+        const stmt = database.prepare(sql);
+        stmt.bind(params);
+        stmt.step();
+        stmt.free();
+
+        // Get last insert ID and changes
+        const lastInsertIdResult = database.exec("SELECT last_insert_rowid() AS id");
+        const lastID = lastInsertIdResult[0].values[0][0];
+
+        const changesResult = database.exec("SELECT changes() AS changes");
+        const changes = changesResult[0].values[0][0];
+
+        persistDb();
+
+        return { id: lastID, changes: changes };
+    } catch (err) {
+        console.error("SQL.js runAsync Error:", err);
+        throw err;
+    }
 };
 
-db.getAsync = function (sql, params = []) {
-    return new Promise((resolve, reject) => {
-        db.get(sql, params, (err, row) => {
-            if (err) reject(err);
-            else resolve(row);
-        });
-    });
+db.getAsync = async function (sql, params = []) {
+    const database = await getDb();
+    try {
+        const stmt = database.prepare(sql);
+        stmt.bind(params);
+        let result = null;
+        if (stmt.step()) {
+            result = stmt.getAsObject();
+        }
+        stmt.free();
+        if (result && Object.keys(result).length === 0) {
+            return null;
+        }
+        return result;
+    } catch (err) {
+        console.error("SQL.js getAsync Error:", err);
+        throw err;
+    }
 };
 
-db.allAsync = function (sql, params = []) {
-    return new Promise((resolve, reject) => {
-        db.all(sql, params, (err, rows) => {
-            if (err) reject(err);
-            else resolve(rows);
-        });
-    });
+db.allAsync = async function (sql, params = []) {
+    const database = await getDb();
+    try {
+        const stmt = database.prepare(sql);
+        stmt.bind(params);
+        const rows = [];
+        while (stmt.step()) {
+            rows.push(stmt.getAsObject());
+        }
+        stmt.free();
+        return rows;
+    } catch (err) {
+        console.error("SQL.js allAsync Error:", err);
+        throw err;
+    }
 };
 
 // Initialize schema
@@ -85,7 +138,7 @@ const initSchema = async () => {
                 FOREIGN KEY(user_id) REFERENCES users(id)
             )
         `);
-        console.log('SQLite schema initialized.');
+        console.log('SQL.js SQLite schema initialized.');
     } catch (err) {
         console.error('Schema initialization error:', err.message);
     }
