@@ -1,0 +1,8 @@
+{
+  "name": "smart-waste-mapping-platform-frontend",
+  "version": "1.0.0",
+  "description": "Frontend static deployment configuration",
+  "scripts": {
+    "build": "node build.js"
+  }
+}
