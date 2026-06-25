@@ -5,6 +5,10 @@ import numpy as np
 
 app = Flask(__name__)
 
+@app.route('/', methods=['GET'])
+def index():
+    return jsonify({"success": True, "message": "AI Service is running successfully on Vercel!"})
+
 # Load trained RandomForest model with a fallback mechanism
 MODEL_PATH = os.path.join(os.path.dirname(__file__), 'waste_model.pkl')
 model = None
