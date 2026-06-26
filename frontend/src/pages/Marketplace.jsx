@@ -1,10 +1,12 @@
 import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
+import { SocketContext } from '../context/SocketContext';
 import { Gift, Sparkles, AlertCircle, ShoppingCart } from 'lucide-react';
 
 const Marketplace = () => {
   const { user, token } = useContext(AuthContext);
+  const { addNotification } = useContext(SocketContext) || { addNotification: () => {} };
   const [rewards, setRewards] = useState([]);
   const [loading, setLoading] = useState(true);
   const [redeemedCode, setRedeemedCode] = useState('');
@@ -61,6 +63,10 @@ const Marketplace = () => {
       setUserScore(prev => Math.max(0, prev - pointsCost));
       setSuccessMessage(`🎉 Redemption successful! Your coupon code is: ${code}`);
       setTimeout(() => setSuccessMessage(''), 5000);
+      
+      if (addNotification) {
+        addNotification(`User ${user?.username || 'Guest'} redeemed reward for ${pointsCost} points!`);
+      }
       return;
     }
 

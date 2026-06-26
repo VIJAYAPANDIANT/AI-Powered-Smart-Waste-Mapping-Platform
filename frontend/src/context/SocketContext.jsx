@@ -51,8 +51,12 @@ export const SocketProvider = ({ children }) => {
     setNotifications([]);
   };
 
+  const addNotification = (message) => {
+    setNotifications((prev) => [{ message }, ...prev]);
+  };
+
   return (
-    <SocketContext.Provider value={{ socket, notifications, clearNotifications }}>
+    <SocketContext.Provider value={{ socket, notifications, clearNotifications, addNotification }}>
       {children}
     </SocketContext.Provider>
   );

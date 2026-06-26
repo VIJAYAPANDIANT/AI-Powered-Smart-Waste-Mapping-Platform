@@ -1,10 +1,12 @@
 import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
+import { SocketContext } from '../context/SocketContext';
 import { Users, Calendar, MapPin, Plus, CheckCircle, Trophy } from 'lucide-react';
 
 const EventsHub = () => {
   const { user, token } = useContext(AuthContext);
+  const { addNotification } = useContext(SocketContext) || { addNotification: () => {} };
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [successMessage, setSuccessMessage] = useState('');
@@ -57,6 +59,19 @@ const EventsHub = () => {
     if (eventId.startsWith('e')) {
       setSuccessMessage('🎉 Thanks for volunteering!');
       setTimeout(() => setSuccessMessage(''), 5000);
+      
+      // Update UI volunteer count for demo events
+      setEvents(prevEvents => prevEvents.map(evt => {
+        if (evt._id === eventId && !evt.volunteers.includes('demo_user')) {
+          return { ...evt, volunteers: [...evt.volunteers, 'demo_user'] };
+        }
+        return evt;
+      }));
+
+      // Simulate notification sent to Admin
+      if (addNotification) {
+        addNotification(`New volunteer (${user?.username || 'User'}) signed up for an event!`);
+      }
       return;
     }
 
@@ -95,6 +110,11 @@ const EventsHub = () => {
         setSuccessMessage('✨ Cleanup event successfully scheduled!');
         setTimeout(() => setSuccessMessage(''), 5000);
         setShowCreateForm(false);
+        
+        if (addNotification) {
+          addNotification(`New Community Cleanup Scheduled: ${title}! Join now.`);
+        }
+        
         // Clear
         setTitle('');
         setDescription('');
