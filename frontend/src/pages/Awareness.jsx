@@ -89,23 +89,51 @@ const Awareness = () => {
               Proper sorting is the core of sustainable waste management. Categorizing waste helps local plants recycle efficiently and keeps toxic chemicals out of the ecosystem.
             </p>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-4 bg-dark-bg/60 border border-dark-border rounded-xl">
-                <span className="text-neon-blue font-bold text-xs uppercase tracking-wider block mb-2">Plastic & Metal</span>
-                <p className="text-gray-400 text-xs leading-relaxed">Ensure plastic containers are completely empty of liquids. Metal cans like aluminum can be recycled repeatedly without degradation.</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-dark-bg/60 border border-dark-border rounded-xl overflow-hidden flex flex-col">
+                <img src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=500&q=80" alt="Plastic Bottles" className="w-full h-32 object-cover opacity-80" />
+                <div className="p-5 flex-1">
+                  <span className="text-neon-blue font-bold text-xs uppercase tracking-wider block mb-2">Plastic & Metal</span>
+                  <p className="text-gray-400 text-xs leading-relaxed">Ensure plastic containers are completely empty of liquids. Metal cans like aluminum can be recycled repeatedly without degradation.</p>
+                </div>
               </div>
-              <div className="p-4 bg-dark-bg/60 border border-dark-border rounded-xl">
-                <span className="text-neon-teal font-bold text-xs uppercase tracking-wider block mb-2">Organic Composting</span>
-                <p className="text-gray-400 text-xs leading-relaxed">Collect food peels, coffee grounds, and garden clippings. Composting helps build nutrient-rich topsoils rather than filling up landfills.</p>
+              <div className="bg-dark-bg/60 border border-dark-border rounded-xl overflow-hidden flex flex-col">
+                <img src="https://images.unsplash.com/photo-1592424001925-50e50058e573?w=500&q=80" alt="Compost" className="w-full h-32 object-cover opacity-80" />
+                <div className="p-5 flex-1">
+                  <span className="text-neon-teal font-bold text-xs uppercase tracking-wider block mb-2">Organic Composting</span>
+                  <p className="text-gray-400 text-xs leading-relaxed">Collect food peels, coffee grounds, and garden clippings. Composting helps build nutrient-rich topsoils rather than filling up landfills.</p>
+                </div>
+              </div>
+              <div className="bg-dark-bg/60 border border-dark-border rounded-xl overflow-hidden flex flex-col">
+                <img src="https://images.unsplash.com/photo-1605600659873-d808a1d14b12?w=500&q=80" alt="Paper Waste" className="w-full h-32 object-cover opacity-80" />
+                <div className="p-5 flex-1">
+                  <span className="text-yellow-400 font-bold text-xs uppercase tracking-wider block mb-2">Paper & Cardboard</span>
+                  <p className="text-gray-400 text-xs leading-relaxed">Keep paper dry and free of grease (like pizza boxes). Flatten all cardboard boxes to save space in bins and transport trucks.</p>
+                </div>
+              </div>
+              <div className="bg-dark-bg/60 border border-dark-border rounded-xl overflow-hidden flex flex-col">
+                <img src="https://images.unsplash.com/photo-1550989460-0adf9ea622e2?w=500&q=80" alt="Glass Bottles" className="w-full h-32 object-cover opacity-80" />
+                <div className="p-5 flex-1">
+                  <span className="text-green-400 font-bold text-xs uppercase tracking-wider block mb-2">Glass Recycling</span>
+                  <p className="text-gray-400 text-xs leading-relaxed">Glass is 100% recyclable and never loses quality. Separate by color if required. Do not include mirrors or lightbulbs.</p>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="glass p-8 rounded-2xl border border-dark-border bg-dark-card">
-            <h2 className="text-xl font-bold text-white mb-4">E-Waste Warnings</h2>
-            <p className="text-gray-400 text-xs leading-relaxed">
-              Discarded screens, mobile phones, batteries, and appliances represent e-waste. They contain dangerous heavy metals (lead, cadmium, mercury) which easily leach into water supplies when discarded in standard garbage bins.
-            </p>
+          <div className="glass p-8 rounded-2xl border border-dark-border bg-dark-card flex flex-col md:flex-row gap-6 items-center">
+            <div className="flex-1">
+              <h2 className="text-xl font-bold text-white mb-4">E-Waste Warnings</h2>
+              <p className="text-gray-400 text-xs leading-relaxed mb-4">
+                Discarded screens, mobile phones, batteries, and appliances represent e-waste. They contain dangerous heavy metals (lead, cadmium, mercury) which easily leach into water supplies when discarded in standard garbage bins.
+              </p>
+              <p className="text-gray-400 text-xs leading-relaxed">
+                Always take e-waste to designated <span className="text-neon-pink font-bold">certified drop-off locations</span> rather than putting them in curbside bins.
+              </p>
+            </div>
+            <div className="w-full md:w-1/3">
+              <img src="https://images.unsplash.com/photo-1550005973-587f7a77e23c?w=500&q=80" alt="E-waste pile" className="w-full h-auto rounded-xl border border-dark-border" />
+            </div>
           </div>
         </div>
       ) : (
