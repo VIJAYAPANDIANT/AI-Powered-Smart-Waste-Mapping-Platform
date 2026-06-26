@@ -33,6 +33,48 @@ const Awareness = () => {
       ],
       answer: "Natural recycling of organic matter into fertilizer",
       explanation: "Composting is the biological decomposition of organic waste like food scraps into nutrient-rich soil helper."
+    },
+    {
+      q: "Which of these materials is typically NOT recyclable in standard curbside bins?",
+      options: ["Aluminum cans", "Styrofoam (Polystyrene)", "Cardboard boxes", "Glass bottles"],
+      answer: "Styrofoam (Polystyrene)",
+      explanation: "Styrofoam is extremely difficult to recycle and usually breaks apart, contaminating other recyclable materials."
+    },
+    {
+      q: "Glass is an excellent material for recycling. How many times can a glass bottle be recycled?",
+      options: ["1 to 2 times", "5 to 7 times", "About 20 times", "Infinitely without losing quality"],
+      answer: "Infinitely without losing quality",
+      explanation: "Glass is 100% recyclable and can be melted down and reformed infinitely without any loss in purity or quality."
+    },
+    {
+      q: "What is the primary danger of improperly disposing of electronic waste (e-waste)?",
+      options: ["They cause immediate explosions", "They leak dangerous heavy metals into groundwater", "They consume excess electricity", "They release CFCs into the atmosphere"],
+      answer: "They leak dangerous heavy metals into groundwater",
+      explanation: "E-waste contains lead, cadmium, and mercury, which can severely contaminate local soil and water supplies if placed in standard landfills."
+    },
+    {
+      q: "What does the term 'Wish-cycling' mean?",
+      options: ["Donating old bicycles to charity", "Putting non-recyclable items in the bin hoping they get recycled", "Recycling items faster than they are produced", "Wishing for a zero-waste lifestyle"],
+      answer: "Putting non-recyclable items in the bin hoping they get recycled",
+      explanation: "Wish-cycling is when people place questionable items in the recycling bin. This actually causes massive contamination and can ruin the entire batch of genuine recyclables."
+    },
+    {
+      q: "How should you properly prepare a cardboard box for recycling?",
+      options: ["Leave it exactly as is", "Fill it with other paper trash", "Flatten it completely and remove packing peanuts", "Soak it in water to soften it"],
+      answer: "Flatten it completely and remove packing peanuts",
+      explanation: "Flattening cardboard saves massive amounts of space in recycling trucks and bins, and removing non-paper packing materials prevents contamination."
+    },
+    {
+      q: "What is the most effective way to reduce the environmental impact of single-use coffee cups?",
+      options: ["Throw them in the recycling bin", "Burn them in a fireplace", "Bring your own reusable cup", "Crush them before throwing them away"],
+      answer: "Bring your own reusable cup",
+      explanation: "Prevention is better than recycling! Most paper coffee cups are lined with plastic to make them waterproof, rendering them unrecyclable in standard facilities."
+    },
+    {
+      q: "What should you do before recycling a plastic peanut butter jar or metal soup can?",
+      options: ["Scrub it with bleach", "Rinse it to remove food residue", "Crush it with a hammer", "Put it in a plastic bag"],
+      answer: "Rinse it to remove food residue",
+      explanation: "Food residue can contaminate entire batches of recyclables, causing them to be sent to the landfill. A quick rinse is all it takes!"
     }
   ];
 
