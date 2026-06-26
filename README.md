@@ -21,6 +21,13 @@ Welcome to the **Smart Waste Mapping Platform**, a community-driven, gamified we
 - 🔔 **Real-Time Notifications:** Stay updated instantly when your reported waste is collected or when you earn a new badge.
 - 🛡️ **Admin Dashboard:** Powerful tools for municipal workers to track hotspots, manage reports, and organize events.
 
+## 🌟 Unique Features
+
+- **🤖 AI-Powered Waste & Risk Prediction:** Employs a Machine Learning model (Random Forest Regressor) to predict waste volume (in tons) and risk level based on coordinates, population density, and complaint counts.
+- **🛣️ Intelligent Route Optimization:** Solves routing for utility trucks using a nearest-neighbor shortest path solver, calculating estimated transit times and fuel saved to reduce emissions.
+- **📍 Geographic Hotspot Clustering:** Automatically groups multi-report zones into density-based hotspots and scales their localized risk level.
+- **🏷️ Automated Priority Classification:** Audits report text to automatically tag priority (Low, Medium, High) and flag hazardous or pathway-blocking incidents.
+
 ## 💻 Tech Stack
 
 This project is built using the **MERN** stack alongside modern frontend tooling:
