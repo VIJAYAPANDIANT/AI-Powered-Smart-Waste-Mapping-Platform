@@ -83,56 +83,94 @@ const Awareness = () => {
 
       {activeTab === 'education' ? (
         <div className="space-y-8">
-          <div className="glass p-8 rounded-2xl border border-dark-border bg-dark-card">
-            <h2 className="text-xl font-bold text-white mb-4">The Recyclers Guide to Waste Categories</h2>
-            <p className="text-gray-400 text-xs leading-relaxed mb-6">
-              Proper sorting is the core of sustainable waste management. Categorizing waste helps local plants recycle efficiently and keeps toxic chemicals out of the ecosystem.
+          <div className="glass p-8 rounded-2xl border border-dark-border bg-dark-card shadow-lg">
+            <h2 className="text-2xl font-bold text-white mb-4">The Recycler's Guide to Waste Categories</h2>
+            <p className="text-gray-400 text-sm leading-relaxed mb-8">
+              Proper sorting is the core of sustainable waste management. Categorizing waste helps local plants recycle efficiently, reduces the cost of processing, and keeps toxic chemicals out of our soil and water ecosystems. 
+              <br/><br/>
+              Did you know? Mixing the wrong items (like greasy pizza boxes) into a recycling bin can contaminate the entire batch, causing it to be sent to a landfill. Here is exactly how to categorize your household waste:
             </p>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-dark-bg/60 border border-dark-border rounded-xl overflow-hidden flex flex-col">
-                <img src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=500&q=80" alt="Plastic Bottles" className="w-full h-32 object-cover opacity-80" />
-                <div className="p-5 flex-1">
-                  <span className="text-neon-blue font-bold text-xs uppercase tracking-wider block mb-2">Plastic & Metal</span>
-                  <p className="text-gray-400 text-xs leading-relaxed">Ensure plastic containers are completely empty of liquids. Metal cans like aluminum can be recycled repeatedly without degradation.</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Plastic & Metal */}
+              <div className="bg-dark-bg/60 border border-dark-border rounded-xl overflow-hidden flex flex-col group hover:border-neon-blue transition-colors">
+                <img src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=500&q=80" alt="Plastic and Metal Bins" className="w-full h-48 object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                <div className="p-6 flex-1">
+                  <span className="text-neon-blue font-bold text-sm uppercase tracking-wider block mb-3">Plastic & Metal</span>
+                  <p className="text-gray-300 text-sm leading-relaxed mb-3">
+                    Ensure plastic containers are completely empty of liquids and rinsed. Leave caps on bottles.
+                  </p>
+                  <ul className="text-gray-400 text-xs list-disc pl-4 space-y-1">
+                    <li><strong className="text-gray-300">Acceptable:</strong> Water bottles, milk jugs, aluminum cans, tin cans, clean foil.</li>
+                    <li><strong className="text-red-400">Never Include:</strong> Plastic bags, styrofoam, unwashed food containers.</li>
+                  </ul>
                 </div>
               </div>
-              <div className="bg-dark-bg/60 border border-dark-border rounded-xl overflow-hidden flex flex-col">
-                <img src="https://images.unsplash.com/photo-1592424001925-50e50058e573?w=500&q=80" alt="Compost" className="w-full h-32 object-cover opacity-80" />
-                <div className="p-5 flex-1">
-                  <span className="text-neon-teal font-bold text-xs uppercase tracking-wider block mb-2">Organic Composting</span>
-                  <p className="text-gray-400 text-xs leading-relaxed">Collect food peels, coffee grounds, and garden clippings. Composting helps build nutrient-rich topsoils rather than filling up landfills.</p>
+
+              {/* Organic Composting */}
+              <div className="bg-dark-bg/60 border border-dark-border rounded-xl overflow-hidden flex flex-col group hover:border-neon-teal transition-colors">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/Compost_site_germany.JPG" alt="Compost Site" className="w-full h-48 object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                <div className="p-6 flex-1">
+                  <span className="text-neon-teal font-bold text-sm uppercase tracking-wider block mb-3">Organic Composting</span>
+                  <p className="text-gray-300 text-sm leading-relaxed mb-3">
+                    Composting turns organic waste into nutrient-rich topsoil, significantly reducing landfill methane emissions.
+                  </p>
+                  <ul className="text-gray-400 text-xs list-disc pl-4 space-y-1">
+                    <li><strong className="text-gray-300">Acceptable:</strong> Fruit/vegetable peels, coffee grounds, eggshells, garden clippings.</li>
+                    <li><strong className="text-red-400">Never Include:</strong> Meat, dairy, bones, pet waste, glossy paper.</li>
+                  </ul>
                 </div>
               </div>
-              <div className="bg-dark-bg/60 border border-dark-border rounded-xl overflow-hidden flex flex-col">
-                <img src="https://images.unsplash.com/photo-1605600659873-d808a1d14b12?w=500&q=80" alt="Paper Waste" className="w-full h-32 object-cover opacity-80" />
-                <div className="p-5 flex-1">
-                  <span className="text-yellow-400 font-bold text-xs uppercase tracking-wider block mb-2">Paper & Cardboard</span>
-                  <p className="text-gray-400 text-xs leading-relaxed">Keep paper dry and free of grease (like pizza boxes). Flatten all cardboard boxes to save space in bins and transport trucks.</p>
+
+              {/* Paper & Cardboard */}
+              <div className="bg-dark-bg/60 border border-dark-border rounded-xl overflow-hidden flex flex-col group hover:border-yellow-400 transition-colors">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/1/16/Paper_recycling_in_Ponte_a_Serraglio.JPG" alt="Paper Recycling" className="w-full h-48 object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                <div className="p-6 flex-1">
+                  <span className="text-yellow-400 font-bold text-sm uppercase tracking-wider block mb-3">Paper & Cardboard</span>
+                  <p className="text-gray-300 text-sm leading-relaxed mb-3">
+                    Paper fibers can be recycled 5-7 times. Keep paper completely dry and break down all cardboard boxes.
+                  </p>
+                  <ul className="text-gray-400 text-xs list-disc pl-4 space-y-1">
+                    <li><strong className="text-gray-300">Acceptable:</strong> Newspapers, magazines, mail, flattened cardboard, cereal boxes.</li>
+                    <li><strong className="text-red-400">Never Include:</strong> Greasy pizza boxes, wet paper, paper towels, tissue paper.</li>
+                  </ul>
                 </div>
               </div>
-              <div className="bg-dark-bg/60 border border-dark-border rounded-xl overflow-hidden flex flex-col">
-                <img src="https://images.unsplash.com/photo-1550989460-0adf9ea622e2?w=500&q=80" alt="Glass Bottles" className="w-full h-32 object-cover opacity-80" />
-                <div className="p-5 flex-1">
-                  <span className="text-green-400 font-bold text-xs uppercase tracking-wider block mb-2">Glass Recycling</span>
-                  <p className="text-gray-400 text-xs leading-relaxed">Glass is 100% recyclable and never loses quality. Separate by color if required. Do not include mirrors or lightbulbs.</p>
+
+              {/* Glass Recycling */}
+              <div className="bg-dark-bg/60 border border-dark-border rounded-xl overflow-hidden flex flex-col group hover:border-green-400 transition-colors">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/f/fe/Glas_aus_Aufbereitungsanlage_bunt_-_glass_cullet_various_%28Alter_Fritz%29.JPG" alt="Crushed Glass Recycling" className="w-full h-48 object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                <div className="p-6 flex-1">
+                  <span className="text-green-400 font-bold text-sm uppercase tracking-wider block mb-3">Glass Recycling</span>
+                  <p className="text-gray-300 text-sm leading-relaxed mb-3">
+                    Glass is 100% infinitely recyclable without any loss in purity. Separate by color if your local facility requires it.
+                  </p>
+                  <ul className="text-gray-400 text-xs list-disc pl-4 space-y-1">
+                    <li><strong className="text-gray-300">Acceptable:</strong> Clear, green, and brown glass bottles and jars (rinsed).</li>
+                    <li><strong className="text-red-400">Never Include:</strong> Mirrors, window glass, lightbulbs, Pyrex, ceramics.</li>
+                  </ul>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="glass p-8 rounded-2xl border border-dark-border bg-dark-card flex flex-col md:flex-row gap-6 items-center">
+          <div className="glass p-8 rounded-2xl border border-dark-border bg-dark-card flex flex-col md:flex-row gap-8 items-center shadow-lg">
             <div className="flex-1">
-              <h2 className="text-xl font-bold text-white mb-4">E-Waste Warnings</h2>
-              <p className="text-gray-400 text-xs leading-relaxed mb-4">
-                Discarded screens, mobile phones, batteries, and appliances represent e-waste. They contain dangerous heavy metals (lead, cadmium, mercury) which easily leach into water supplies when discarded in standard garbage bins.
+              <h2 className="text-2xl font-bold text-white mb-4">E-Waste & Hazardous Materials</h2>
+              <p className="text-gray-400 text-sm leading-relaxed mb-4">
+                Discarded screens, mobile phones, batteries, and appliances represent e-waste. They contain dangerous heavy metals like <strong>lead, cadmium, and mercury</strong> which easily leach into groundwater supplies when illegally dumped or placed in standard garbage bins.
               </p>
-              <p className="text-gray-400 text-xs leading-relaxed">
-                Always take e-waste to designated <span className="text-neon-pink font-bold">certified drop-off locations</span> rather than putting them in curbside bins.
+              <p className="text-gray-400 text-sm leading-relaxed mb-6">
+                A single smartphone contains precious metals like gold, silver, and copper, alongside hazardous lithium-ion batteries that can cause devastating landfill fires if crushed.
               </p>
+              <div className="bg-neon-pink/10 border border-neon-pink p-4 rounded-xl">
+                <p className="text-gray-300 text-sm font-medium">
+                  <strong>CRITICAL RULE:</strong> Always take e-waste and batteries to designated <span className="text-neon-pink font-bold">certified drop-off locations</span> rather than curbside bins. Check the "Recycling Hubs" on our map to find a drop-off near you!
+                </p>
+              </div>
             </div>
-            <div className="w-full md:w-1/3">
-              <img src="https://images.unsplash.com/photo-1550005973-587f7a77e23c?w=500&q=80" alt="E-waste pile" className="w-full h-auto rounded-xl border border-dark-border" />
+            <div className="w-full md:w-5/12 shrink-0">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/3/30/Ewaste-pile.jpg" alt="E-waste pile" className="w-full h-64 object-cover rounded-xl border border-dark-border shadow-md hover:scale-105 transition-transform duration-300" />
             </div>
           </div>
         </div>
