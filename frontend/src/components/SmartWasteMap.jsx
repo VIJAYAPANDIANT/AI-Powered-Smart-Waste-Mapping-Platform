@@ -141,7 +141,9 @@ const SmartWasteMap = ({ reports = [], selectMode = false, onMapClick, selectedC
         onMapClick(location.latitude, location.longitude);
       }
     } catch (err) {
-      alert(err.message);
+      setGeoAlertMsg("Location access denied. Please enable location services in your browser settings to use this feature.");
+      setShowGeoAlert(true);
+      setTimeout(() => setShowGeoAlert(false), 5000);
     }
   };
 
