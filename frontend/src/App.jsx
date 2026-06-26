@@ -20,7 +20,9 @@ import LeaderboardPage from './pages/LeaderboardPage';
 import AdminDashboard from './pages/AdminDashboard';
 import Marketplace from './pages/Marketplace';
 import EventsHub from './pages/EventsHub';
-
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
+import ContactUs from './pages/ContactUs';
 function App() {
   return (
     <AuthProvider>
@@ -36,6 +38,9 @@ function App() {
                 <Route path="/map" element={<MapView />} />
                 <Route path="/awareness" element={<Awareness />} />
                 <Route path="/leaderboard" element={<LeaderboardPage />} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="/terms" element={<TermsOfService />} />
+                <Route path="/contact" element={<ContactUs />} />
                 
                 {/* Protected Routes */}
                 <Route 
