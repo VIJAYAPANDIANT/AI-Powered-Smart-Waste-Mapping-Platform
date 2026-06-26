@@ -5,13 +5,25 @@ const LeaderboardTable = ({ standings }) => {
   const getRankBadge = (rank) => {
     switch (rank) {
       case 1:
-        return <Trophy className="h-5 w-5 text-yellow-400 drop-shadow-[0_0_6px_rgba(250,204,21,0.4)]" />;
+        return <Trophy className="h-6 w-6 text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]" />;
       case 2:
-        return <Medal className="h-5 w-5 text-gray-300" />;
+        return <Medal className="h-6 w-6 text-gray-300 drop-shadow-[0_0_6px_rgba(209,213,219,0.3)]" />;
       case 3:
-        return <Award className="h-5 w-5 text-amber-600" />;
+        return <Award className="h-6 w-6 text-amber-600 drop-shadow-[0_0_6px_rgba(217,119,6,0.3)]" />;
       default:
-        return <span className="text-gray-500 font-semibold">{rank}</span>;
+        if (rank <= 10) {
+          return (
+            <div className="flex items-center justify-center h-6 w-6 rounded-md bg-neon-blue/10 border border-neon-blue/40 text-neon-blue font-bold text-xs shadow-[0_0_8px_rgba(0,240,255,0.2)]">
+              {rank}
+            </div>
+          );
+        } else {
+          return (
+            <div className="flex items-center justify-center h-6 w-6 rounded-md bg-dark-bg border border-gray-700 text-gray-400 font-bold text-xs">
+              {rank}
+            </div>
+          );
+        }
     }
   };
 
