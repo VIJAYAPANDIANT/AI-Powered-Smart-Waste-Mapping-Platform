@@ -51,6 +51,16 @@ const Marketplace = () => {
     setErrorMessage('');
     setRedeemedCode('');
 
+    // If these are demo rewards (which have IDs starting with 'r'), mock the redemption!
+    if (rewardId.startsWith('r')) {
+      const code = "DEMO-ECO-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+      setRedeemedCode(code);
+      // Optional: simulate deducting points if they had any, or just leave it for demo
+      setUserScore(prev => Math.max(0, prev - pointsCost));
+      alert(`🎉 Redemption successful! Your coupon code is: ${code}`);
+      return;
+    }
+
     if (userScore < pointsCost) {
       setErrorMessage('Insufficient eco points! Report more waste to earn points.');
       return;
