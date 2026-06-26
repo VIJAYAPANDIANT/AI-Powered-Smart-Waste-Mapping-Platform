@@ -2,6 +2,8 @@ import React from 'react';
 import { Mail, User, MapPin, MessageSquare } from 'lucide-react';
 
 const ContactUs = () => {
+  const [success, setSuccess] = React.useState(false);
+
   return (
     <div className="max-w-4xl mx-auto px-6 py-12 space-y-8 animate-fade-in">
       <div className="text-center space-y-4 mb-10">
@@ -57,7 +59,13 @@ const ContactUs = () => {
             <MessageSquare className="h-6 w-6 text-gray-400" /> Send a Message
           </h2>
           
-          <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); alert("Message sent successfully to Admin!"); }}>
+          {success && (
+            <div className="mb-6 bg-neon-teal/10 border border-neon-teal/30 text-neon-teal p-4 rounded-xl text-sm font-bold flex items-center justify-center animate-fade-in">
+              ✨ Message sent successfully to Admin!
+            </div>
+          )}
+          
+          <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); setSuccess(true); setTimeout(() => setSuccess(false), 5000); e.target.reset(); }}>
             <div>
               <label className="block text-xs font-bold text-gray-400 mb-1">Your Name</label>
               <input type="text" className="w-full bg-dark-bg border border-dark-border rounded-xl p-3 text-white focus:outline-none focus:border-neon-teal transition-colors" placeholder="John Doe" required />

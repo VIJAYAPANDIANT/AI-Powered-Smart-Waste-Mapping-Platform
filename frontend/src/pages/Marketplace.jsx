@@ -9,6 +9,7 @@ const Marketplace = () => {
   const [loading, setLoading] = useState(true);
   const [redeemedCode, setRedeemedCode] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const [userScore, setUserScore] = useState(user?.impactScore || 0);
 
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
@@ -49,6 +50,7 @@ const Marketplace = () => {
 
   const handleRedeem = async (rewardId, pointsCost) => {
     setErrorMessage('');
+    setSuccessMessage('');
     setRedeemedCode('');
 
     // If these are demo rewards (which have IDs starting with 'r'), mock the redemption!
@@ -57,7 +59,8 @@ const Marketplace = () => {
       setRedeemedCode(code);
       // Optional: simulate deducting points if they had any, or just leave it for demo
       setUserScore(prev => Math.max(0, prev - pointsCost));
-      alert(`🎉 Redemption successful! Your coupon code is: ${code}`);
+      setSuccessMessage(`🎉 Redemption successful! Your coupon code is: ${code}`);
+      setTimeout(() => setSuccessMessage(''), 5000);
       return;
     }
 
@@ -74,7 +77,8 @@ const Marketplace = () => {
       if (res.data.success) {
         setRedeemedCode(res.data.code);
         setUserScore(res.data.newScore);
-        alert(`Redemption successful! Your coupon code: ${res.data.code}`);
+        setSuccessMessage(`Redemption successful! Your coupon code: ${res.data.code}`);
+        setTimeout(() => setSuccessMessage(''), 5000);
         fetchRewards(); // Refresh stock
       }
     } catch (err) {
@@ -98,8 +102,14 @@ const Marketplace = () => {
       </div>
 
       {errorMessage && (
-        <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-4 rounded-xl text-xs flex items-center gap-2">
+        <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-4 rounded-xl text-xs flex items-center gap-2 animate-fade-in">
           <AlertCircle className="h-4 w-4" /> {errorMessage}
+        </div>
+      )}
+
+      {successMessage && (
+        <div className="bg-neon-teal/10 border border-neon-teal/30 text-neon-teal p-4 rounded-xl text-xs flex items-center gap-2 animate-fade-in shadow-[0_0_10px_rgba(0,245,212,0.1)]">
+          <Sparkles className="h-4 w-4" /> {successMessage}
         </div>
       )}
 

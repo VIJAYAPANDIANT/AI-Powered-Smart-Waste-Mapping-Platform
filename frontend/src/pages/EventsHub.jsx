@@ -7,6 +7,8 @@ const EventsHub = () => {
   const { user, token } = useContext(AuthContext);
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   // Event Creation state (for admin users)
   const [title, setTitle] = useState('');
@@ -49,8 +51,12 @@ const EventsHub = () => {
   }, []);
 
   const handleVolunteer = async (eventId) => {
+    setSuccessMessage('');
+    setErrorMessage('');
+    
     if (eventId.startsWith('e')) {
-      alert('Thanks for volunteering! (Demo Mode)');
+      setSuccessMessage('🎉 Thanks for volunteering! (Demo Mode)');
+      setTimeout(() => setSuccessMessage(''), 5000);
       return;
     }
 
@@ -60,11 +66,13 @@ const EventsHub = () => {
       };
       const res = await axios.post(`${API_URL}/events/${eventId}/join`, {}, config);
       if (res.data.success) {
-        alert(res.data.message);
+        setSuccessMessage(res.data.message);
+        setTimeout(() => setSuccessMessage(''), 5000);
         fetchEvents(); // Refresh volunteer lists
       }
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to volunteer.');
+      setErrorMessage(err.response?.data?.message || 'Failed to volunteer.');
+      setTimeout(() => setErrorMessage(''), 5000);
     }
   };
 
@@ -84,7 +92,8 @@ const EventsHub = () => {
       };
       const res = await axios.post(`${API_URL}/events`, payload, config);
       if (res.data.success) {
-        alert('Cleanup event successfully scheduled!');
+        setSuccessMessage('✨ Cleanup event successfully scheduled!');
+        setTimeout(() => setSuccessMessage(''), 5000);
         setShowCreateForm(false);
         // Clear
         setTitle('');
@@ -96,7 +105,8 @@ const EventsHub = () => {
         fetchEvents();
       }
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to create event.');
+      setErrorMessage(err.response?.data?.message || 'Failed to create event.');
+      setTimeout(() => setErrorMessage(''), 5000);
     }
   };
 
@@ -119,6 +129,18 @@ const EventsHub = () => {
           </button>
         )}
       </div>
+
+      {successMessage && (
+        <div className="bg-neon-teal/10 border border-neon-teal/30 text-neon-teal p-4 rounded-xl text-sm font-bold flex items-center gap-2 animate-fade-in shadow-[0_0_10px_rgba(0,245,212,0.1)]">
+          <CheckCircle className="h-5 w-5" /> {successMessage}
+        </div>
+      )}
+
+      {errorMessage && (
+        <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-4 rounded-xl text-sm font-bold flex items-center gap-2 animate-fade-in">
+          {errorMessage}
+        </div>
+      )}
 
       {showCreateForm && (
         <div className="glass p-8 rounded-2xl border border-dark-border bg-dark-card max-w-xl mx-auto">
