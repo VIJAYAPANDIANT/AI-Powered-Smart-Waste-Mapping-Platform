@@ -6,8 +6,8 @@ Welcome to the **Smart Waste Mapping Platform**, a community-driven, gamified we
 
 🔑 **Demo Credentials:**
 * **Admin Account:**
-  * Email: `admin@smartwaste.org`
-  * Password: `password123`
+  * Email: `vijayapandian112007@gmail.com`
+  * Password: `123456`
 * **User Account:**
   * Email: `vijayapandiant07@gmail.com`
   * Password: `123456`
