@@ -53,7 +53,7 @@ erDiagram
 
     LEADERBOARD {
         ObjectId id PK
-        ObjectId userId FK UK
+        ObjectId userId FK,UK
         String username
         Number impactScore
         Number rank
