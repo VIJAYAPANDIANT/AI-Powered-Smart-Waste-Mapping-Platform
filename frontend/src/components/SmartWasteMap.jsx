@@ -17,13 +17,13 @@ let DefaultIcon = L.icon({
 L.Marker.prototype.options.icon = DefaultIcon;
 
 // Map controller to adjust view dynamically
-const FlyToUser = ({ coords }) => {
+const FlyToUser = ({ coords, zoom = 14 }) => {
   const map = useMap();
   useEffect(() => {
     if (coords) {
-      map.flyTo(coords, 14, { animate: true });
+      map.flyTo(coords, zoom, { animate: true });
     }
-  }, [coords, map]);
+  }, [coords, zoom, map]);
   return null;
 };
 
@@ -52,8 +52,8 @@ const truckIcon = L.divIcon({
   iconAnchor: [14, 14]
 });
 
-const SmartWasteMap = ({ reports = [], selectMode = false, onMapClick, selectedCoords, center }) => {
-  const defaultCenter = [37.7749, -122.4194]; // San Francisco
+const SmartWasteMap = ({ reports = [], selectMode = false, onMapClick, selectedCoords, center, zoom = 2 }) => {
+  const defaultCenter = [20, 0]; // Global view by default
   const [gpsCoords, setGpsCoords] = useState(null);
   const [showRecycling, setShowRecycling] = useState(true);
   const [showHeatmap, setShowHeatmap] = useState(false);
@@ -291,7 +291,7 @@ const SmartWasteMap = ({ reports = [], selectMode = false, onMapClick, selectedC
 
       <MapContainer 
         center={center || defaultCenter} 
-        zoom={12} 
+        zoom={zoom} 
         className="w-full h-full"
       >
         <TileLayer
@@ -299,7 +299,7 @@ const SmartWasteMap = ({ reports = [], selectMode = false, onMapClick, selectedC
           url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
         />
 
-        <FlyToUser coords={gpsCoords || center} />
+        <FlyToUser coords={gpsCoords || center} zoom={gpsCoords ? 14 : zoom} />
 
         {/* Live Tracking Cleaning Truck */}
         {showTruck && truckCoords && (

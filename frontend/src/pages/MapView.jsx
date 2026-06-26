@@ -9,7 +9,8 @@ const MapView = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
   const [loading, setLoading] = useState(true);
-  const [center, setCenter] = useState([37.7749, -122.4194]); // SF default
+  const [center, setCenter] = useState([20, 0]); // Global default
+  const [zoom, setZoom] = useState(2); // Global zoom default
 
   const fetchReports = async () => {
     setLoading(true);
@@ -18,13 +19,6 @@ const MapView = () => {
       if (data.success) {
         setReports(data.data);
         setFilteredReports(data.data);
-        // Set center to first report coordinates if any
-        if (data.data.length > 0) {
-          const first = data.data[0].location?.coordinates;
-          if (first && first.length === 2) {
-            setCenter([first[1], first[0]]);
-          }
-        }
       }
     } catch (err) {
       console.error(err);
@@ -51,6 +45,7 @@ const MapView = () => {
   const handleFocus = (coords) => {
     if (coords && coords.length === 2) {
       setCenter([coords[1], coords[0]]);
+      setZoom(14); // Zoom in when focusing on a specific report
     }
   };
 
@@ -74,7 +69,7 @@ const MapView = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <SmartWasteMap reports={filteredReports} center={center} />
+          <SmartWasteMap reports={filteredReports} center={center} zoom={zoom} />
         </div>
 
         <div className="space-y-6">
