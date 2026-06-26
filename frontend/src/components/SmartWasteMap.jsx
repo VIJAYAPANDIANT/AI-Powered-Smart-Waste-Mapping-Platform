@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Circle, useMap, Polyline } from 'react-leaflet';
 import L from 'leaflet';
 import { getCurrentLocation } from '../services/locationService';
-import { Compass, Layers, Recycle, MapPin, Truck, AlertCircle, Navigation } from 'lucide-react';
+import { Compass, Layers, Recycle, MapPin, Truck, AlertCircle, Navigation, Settings } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 
 // Fix Leaflet icons
@@ -211,81 +211,97 @@ const SmartWasteMap = ({ reports = [], selectMode = false, onMapClick, selectedC
 
   const { clusters, singles } = getClusteredReports();
 
+  const [showTools, setShowTools] = useState(false);
+
   return (
     <div className="relative w-full h-[450px] md:h-[550px] rounded-2xl overflow-hidden border border-dark-border shadow-neon-blue">
-      {/* Dynamic Action HUD */}
-      <div className="absolute top-4 right-4 z-[400] flex flex-col gap-2">
+      {/* Dynamic Action HUD - Grouped into a list */}
+      <div className="absolute top-4 right-4 z-[1000] flex flex-col items-end gap-2">
+        
+        {/* Main Toggle Button */}
         <button 
-          onClick={handleGpsDetect}
-          className="bg-dark-card/90 hover:bg-neon-blue/15 border border-dark-border hover:border-neon-blue text-gray-300 hover:text-neon-blue p-2.5 rounded-xl cursor-pointer transition-all flex items-center gap-1.5 text-xs font-bold backdrop-blur"
-          title="Detect Current GPS Location"
+          onClick={() => setShowTools(!showTools)}
+          className="bg-dark-card border border-neon-blue text-white hover:text-neon-blue hover:bg-neon-blue/10 p-2.5 rounded-xl cursor-pointer transition-all flex items-center gap-2 text-xs font-bold shadow-neon-glow"
+          title="Toggle Map Tools"
         >
-          <Compass className="h-4 w-4" /> Locate Me
+          <Settings className="h-4 w-4" /> Map Tools
         </button>
 
-        {!selectMode && (
-          <>
+        {/* Dropdown List of Tools */}
+        {showTools && (
+          <div className="flex flex-col gap-2 bg-dark-card/95 p-3 rounded-xl border border-dark-border backdrop-blur-md shadow-xl animate-fade-in w-40">
             <button 
-              onClick={() => {
-                setShowHeatmap(!showHeatmap);
-                if (!showHeatmap) setShowClusters(false);
-              }}
-              className={`p-2.5 rounded-xl cursor-pointer transition-all flex items-center gap-1.5 text-xs font-bold backdrop-blur border ${
-                showHeatmap 
-                  ? 'bg-neon-pink/15 border-neon-pink text-neon-pink' 
-                  : 'bg-dark-card/90 border-dark-border text-gray-300 hover:text-neon-pink'
-              }`}
+              onClick={handleGpsDetect}
+              className="bg-dark-bg hover:bg-neon-blue/15 border border-dark-border hover:border-neon-blue text-gray-300 hover:text-neon-blue p-2 rounded-lg cursor-pointer transition-all flex items-center gap-2 text-[11px] font-bold"
             >
-              <Layers className="h-4 w-4" /> Heatmap
+              <Compass className="h-3.5 w-3.5" /> Locate Me
             </button>
 
-            <button 
-              onClick={() => {
-                setShowClusters(!showClusters);
-                if (!showClusters) setShowHeatmap(false);
-              }}
-              className={`p-2.5 rounded-xl cursor-pointer transition-all flex items-center gap-1.5 text-xs font-bold backdrop-blur border ${
-                showClusters 
-                  ? 'bg-neon-purple/15 border-neon-purple text-neon-purple' 
-                  : 'bg-dark-card/90 border-dark-border text-gray-300 hover:text-neon-purple'
-              }`}
-            >
-              <MapPin className="h-4 w-4" /> Cluster
-            </button>
+            {!selectMode && (
+              <>
+                <button 
+                  onClick={() => {
+                    setShowHeatmap(!showHeatmap);
+                    if (!showHeatmap) setShowClusters(false);
+                  }}
+                  className={`p-2 rounded-lg cursor-pointer transition-all flex items-center gap-2 text-[11px] font-bold border ${
+                    showHeatmap 
+                      ? 'bg-neon-pink/15 border-neon-pink text-neon-pink' 
+                      : 'bg-dark-bg border-dark-border text-gray-300 hover:text-neon-pink'
+                  }`}
+                >
+                  <Layers className="h-3.5 w-3.5" /> Heatmap
+                </button>
 
-             <button 
-              onClick={() => setShowRecycling(!showRecycling)}
-              className={`p-2.5 rounded-xl cursor-pointer transition-all flex items-center gap-1.5 text-xs font-bold backdrop-blur border ${
-                showRecycling 
-                  ? 'bg-neon-teal/15 border-neon-teal text-neon-teal' 
-                  : 'bg-dark-card/90 border-dark-border text-gray-300 hover:text-neon-teal'
-              }`}
-            >
-              <Recycle className="h-4 w-4" /> Recycling Hubs
-            </button>
+                <button 
+                  onClick={() => {
+                    setShowClusters(!showClusters);
+                    if (!showClusters) setShowHeatmap(false);
+                  }}
+                  className={`p-2 rounded-lg cursor-pointer transition-all flex items-center gap-2 text-[11px] font-bold border ${
+                    showClusters 
+                      ? 'bg-neon-purple/15 border-neon-purple text-neon-purple' 
+                      : 'bg-dark-bg border-dark-border text-gray-300 hover:text-neon-purple'
+                  }`}
+                >
+                  <MapPin className="h-3.5 w-3.5" /> Cluster
+                </button>
 
-            <button 
-              onClick={() => setShowTruck(!showTruck)}
-              className={`p-2.5 rounded-xl cursor-pointer transition-all flex items-center gap-1.5 text-xs font-bold backdrop-blur border ${
-                showTruck 
-                  ? 'bg-neon-blue/15 border-neon-blue text-neon-blue animate-pulse' 
-                  : 'bg-dark-card/90 border-dark-border text-gray-300 hover:text-neon-blue'
-              }`}
-            >
-              <Truck className="h-4 w-4" /> Live Tracking
-            </button>
+                 <button 
+                  onClick={() => setShowRecycling(!showRecycling)}
+                  className={`p-2 rounded-lg cursor-pointer transition-all flex items-center gap-2 text-[11px] font-bold border ${
+                    showRecycling 
+                      ? 'bg-neon-teal/15 border-neon-teal text-neon-teal' 
+                      : 'bg-dark-bg border-dark-border text-gray-300 hover:text-neon-teal'
+                  }`}
+                >
+                  <Recycle className="h-3.5 w-3.5" /> Hubs
+                </button>
 
-            <button 
-              onClick={() => setShowRoute(!showRoute)}
-              className={`p-2.5 rounded-xl cursor-pointer transition-all flex items-center gap-1.5 text-xs font-bold backdrop-blur border ${
-                showRoute 
-                  ? 'bg-neon-teal/15 border-neon-teal text-neon-teal animate-pulse' 
-                  : 'bg-dark-card/90 border-dark-border text-gray-300 hover:text-neon-teal'
-              }`}
-            >
-              <Navigation className="h-4 w-4" /> Route Optimizer
-            </button>
-          </>
+                <button 
+                  onClick={() => setShowTruck(!showTruck)}
+                  className={`p-2 rounded-lg cursor-pointer transition-all flex items-center gap-2 text-[11px] font-bold border ${
+                    showTruck 
+                      ? 'bg-neon-blue/15 border-neon-blue text-neon-blue animate-pulse' 
+                      : 'bg-dark-bg border-dark-border text-gray-300 hover:text-neon-blue'
+                  }`}
+                >
+                  <Truck className="h-3.5 w-3.5" /> Truck Cam
+                </button>
+
+                <button 
+                  onClick={() => setShowRoute(!showRoute)}
+                  className={`p-2 rounded-lg cursor-pointer transition-all flex items-center gap-2 text-[11px] font-bold border ${
+                    showRoute 
+                      ? 'bg-neon-teal/15 border-neon-teal text-neon-teal animate-pulse' 
+                      : 'bg-dark-bg border-dark-border text-gray-300 hover:text-neon-teal'
+                  }`}
+                >
+                  <Navigation className="h-3.5 w-3.5" /> Optimizer
+                </button>
+              </>
+            )}
+          </div>
         )}
       </div>
 
