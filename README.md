@@ -2,6 +2,8 @@
 
 Welcome to the **Smart Waste Mapping Platform**, a community-driven, gamified web application designed to help citizens and municipalities collaborate on keeping their cities clean. This platform allows users to report waste hotspots, track cleanup efforts, and earn "Eco Points" that can be redeemed for sustainable rewards.
 
+🔗 **Live Website:** [https://ai-powered-smart-waste-mapping-plat.vercel.app](https://ai-powered-smart-waste-mapping-plat.vercel.app)
+
 ![Project Status](https://img.shields.io/badge/Status-Active-brightgreen)
 ![Tech Stack](https://img.shields.io/badge/Tech-MERN_Stack-blue)
 ![License](https://img.shields.io/badge/License-MIT-purple)
@@ -37,6 +39,69 @@ This project is built using the **MERN** stack alongside modern frontend tooling
 - JSON Web Tokens (JWT Authentication)
 - Socket.io (Real-time WebSockets)
 - Multer & Cloudinary (Image Uploads)
+
+## 🗄️ Database Schema
+
+Below is the Entity Relationship (ER) Diagram of the database schema, detailing the collections and their relationships:
+
+```mermaid
+erDiagram
+    USERS ||--o{ WASTE_REPORTS : "reports"
+    USERS ||--o{ NOTIFICATIONS : "receives"
+    USERS ||--o{ ACHIEVEMENTS : "unlocks"
+    USERS ||--|| LEADERBOARD : "placed_in"
+    
+    USERS {
+        ObjectId id PK
+        String username
+        String email UK
+        String password
+        String role
+        Number impactScore
+        Date createdAt
+    }
+
+    WASTE_REPORTS {
+        ObjectId id PK
+        Object location "GeoJSON Point (2dsphere)"
+        String wasteType
+        String description
+        String status
+        String photoUrl
+        ObjectId userId FK
+        String assignedTeam
+        Date createdAt
+    }
+
+    NOTIFICATIONS {
+        ObjectId id PK
+        ObjectId userId FK "Nullable (Global if null)"
+        String message
+        Boolean read
+        String type
+        Date createdAt
+    }
+
+    ACHIEVEMENTS {
+        ObjectId id PK
+        ObjectId userId FK
+        String title
+        String description
+        String badgeUrl
+        Date createdAt
+    }
+
+    LEADERBOARD {
+        ObjectId id PK
+        ObjectId userId FK,UK
+        String username
+        Number impactScore
+        Number rank
+        Date lastUpdated
+    }
+```
+
+For a detailed explanation of indexes, validation constraints, and other design considerations, please refer to the [database_schema.md](file:///c:/1M1B/AI-Powered-Smart-Waste-Mapping-Platform/docs/database_schema.md) file.
 
 ## 🚀 Getting Started
 
