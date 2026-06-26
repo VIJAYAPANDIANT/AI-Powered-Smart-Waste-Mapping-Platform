@@ -4,6 +4,14 @@ Welcome to the **Smart Waste Mapping Platform**, a community-driven, gamified we
 
 🔗 **Live Website:** [https://ai-powered-smart-waste-mapping-plat.vercel.app](https://ai-powered-smart-waste-mapping-plat.vercel.app)
 
+🔑 **Demo Credentials:**
+* **Admin Account:**
+  * Email: `admin@smartwaste.org`
+  * Password: `password123`
+* **User Account:**
+  * Email: `vijayapandiant07@gmail.com`
+  * Password: `123456`
+
 ![Project Status](https://img.shields.io/badge/Status-Active-brightgreen)
 ![Tech Stack](https://img.shields.io/badge/Tech-MERN_Stack-blue)
 ![License](https://img.shields.io/badge/License-MIT-purple)
