@@ -21,13 +21,24 @@ const EventsHub = () => {
 
   const fetchEvents = async () => {
     setLoading(true);
+
+    const demoEvents = [
+      { _id: 'e1', title: 'Golden Gate Park Cleanup', description: 'Join us to clear out litter left after the weekend festival. Gloves provided.', address: 'Golden Gate Park, San Francisco, CA', date: new Date(Date.now() + 86400000 * 2).toISOString(), organizer: { username: 'City Services' }, volunteers: [] },
+      { _id: 'e2', title: 'Ocean Beach Plastic Removal', description: 'Help us prevent plastic from entering the ocean. Bring a bucket!', address: 'Ocean Beach, San Francisco, CA', date: new Date(Date.now() + 86400000 * 5).toISOString(), organizer: { username: 'EcoWarriors' }, volunteers: ['u1', 'u2', 'u3'] },
+      { _id: 'e3', title: 'Central Park Community Sweep', description: 'Monthly meetup to keep the park pristine. Free coffee included.', address: 'Central Park, New York, NY', date: new Date(Date.now() + 86400000 * 7).toISOString(), organizer: { username: 'NYCParks' }, volunteers: ['u1'] },
+      { _id: 'e4', title: 'Thames Riverbank Rescue', description: 'Clearing debris at low tide to protect local wildlife.', address: 'Thames Riverbank, London, UK', date: new Date(Date.now() + 86400000 * 12).toISOString(), organizer: { username: 'LondonGreen' }, volunteers: ['u1', 'u2'] },
+      { _id: 'e5', title: 'Shibuya City Cleanup', description: 'Urban cleanup focusing on street-level recyclables and e-waste.', address: 'Shibuya Crossing, Tokyo, Japan', date: new Date(Date.now() + 86400000 * 15).toISOString(), organizer: { username: 'TokyoRecycles' }, volunteers: [] }
+    ];
+
     try {
       const res = await axios.get(`${API_URL}/events`);
-      if (res.data.success) {
+      if (res.data.success && res.data.data.length > 0) {
         setEvents(res.data.data);
+      } else {
+        setEvents(demoEvents);
       }
     } catch (err) {
-      console.error(err);
+      setEvents(demoEvents);
     } finally {
       setLoading(false);
     }
