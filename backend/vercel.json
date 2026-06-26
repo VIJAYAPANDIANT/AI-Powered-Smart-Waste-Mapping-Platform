@@ -14,11 +14,11 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/api/index.js"
+      "destination": "/index.js"
     }
   ],
   "functions": {
-    "api/index.js": {
+    "index.js": {
       "includeFiles": "database.json"
     }
   }
