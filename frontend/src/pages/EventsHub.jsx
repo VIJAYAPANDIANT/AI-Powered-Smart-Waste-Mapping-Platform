@@ -55,7 +55,7 @@ const EventsHub = () => {
     setErrorMessage('');
     
     if (eventId.startsWith('e')) {
-      setSuccessMessage('🎉 Thanks for volunteering! (Demo Mode)');
+      setSuccessMessage('🎉 Thanks for volunteering!');
       setTimeout(() => setSuccessMessage(''), 5000);
       return;
     }
