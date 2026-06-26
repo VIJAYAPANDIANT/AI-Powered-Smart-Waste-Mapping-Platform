@@ -122,6 +122,15 @@ const SmartWasteMap = ({ reports = [], selectMode = false, onMapClick, selectedC
   const recyclingCenters = [
     { id: 'rc1', name: 'Smart City E-Waste Recycling Hub', coords: [37.7833, -122.4167], address: 'Civic Center, San Francisco, CA' },
     { id: 'rc2', name: 'Eco Bottles Composting Facility', coords: [37.7599, -122.4348], address: 'Mission District, San Francisco, CA' },
+    { id: 'rc3', name: 'Green India Waste Management', coords: [28.6139, 77.2090], address: 'New Delhi, India' },
+    { id: 'rc4', name: 'Toronto Eco Hub', coords: [43.6510, -79.3470], address: 'Toronto, Canada' },
+    { id: 'rc5', name: 'Roma Riciclo Center', coords: [41.9028, 12.4964], address: 'Rome, Italy' },
+    { id: 'rc6', name: 'Madrid Recicla', coords: [40.4168, -3.7038], address: 'Madrid, Spain' },
+    { id: 'rc7', name: 'London Green Waste Facility', coords: [51.5074, -0.1278], address: 'London, England' },
+    { id: 'rc8', name: 'Tokyo Eco-Recycle Plaza', coords: [35.6762, 139.6503], address: 'Tokyo, Japan' },
+    { id: 'rc9', name: 'Sydney Sustainability Center', coords: [-33.8688, 151.2093], address: 'Sydney, Australia' },
+    { id: 'rc10', name: 'São Paulo Reciclagem', coords: [-23.5505, -46.6333], address: 'São Paulo, Brazil' },
+    { id: 'rc11', name: 'Cape Town Eco Depot', coords: [-33.9249, 18.4241], address: 'Cape Town, South Africa' },
   ];
 
   const handleGpsDetect = async () => {
