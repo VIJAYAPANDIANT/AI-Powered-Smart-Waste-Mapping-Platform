@@ -15,13 +15,26 @@ const Marketplace = () => {
 
   const fetchRewards = async () => {
     setLoading(true);
+    
+    // Demo Fallback Data
+    const demoRewards = [
+      { _id: 'r1', title: 'Plant 1 Tree', description: 'Partner with OneTreePlanted to plant a tree in a deforested area.', pointsCost: 50, stock: 999 },
+      { _id: 'r2', title: '$5 Eco-Store Coupon', description: 'Discount on sustainable products at our partner eco-stores.', pointsCost: 100, stock: 50 },
+      { _id: 'r3', title: 'Free Transit Pass', description: 'One free day pass for local public transportation to reduce carbon emissions.', pointsCost: 150, stock: 20 },
+      { _id: 'r4', title: 'Reusable Coffee Cup', description: 'Premium stainless steel insulated coffee cup to replace single-use plastics.', pointsCost: 200, stock: 15 },
+      { _id: 'r5', title: 'Solar Power Bank', description: 'Portable phone charger powered entirely by the sun.', pointsCost: 300, stock: 5 },
+      { _id: 'r6', title: 'Electric Scooter Ride', description: '30 minutes free on any partner electric scooter in the city.', pointsCost: 80, stock: 100 }
+    ];
+
     try {
       const res = await axios.get(`${API_URL}/rewards`);
-      if (res.data.success) {
+      if (res.data.success && res.data.data.length > 0) {
         setRewards(res.data.data);
+      } else {
+        setRewards(demoRewards); // Use demo data if DB is empty
       }
     } catch (err) {
-      console.error(err);
+      setRewards(demoRewards); // Use demo data on error
     } finally {
       setLoading(false);
     }
