@@ -2,19 +2,26 @@
 
 Welcome to the **Smart Waste Mapping Platform**, a community-driven, gamified web application designed to help citizens and municipalities collaborate on keeping their cities clean. This platform allows users to report waste hotspots, track cleanup efforts, and earn "Eco Points" that can be redeemed for sustainable rewards.
 
-🔗 **Live Website:** [https://ai-powered-smart-waste-mapping-plat.vercel.app](https://ai-powered-smart-waste-mapping-plat.vercel.app)
+<p align="center">
+  <a href="https://ai-powered-smart-waste-mapping-plat.vercel.app">
+    <img src="https://img.shields.io/badge/Live%20Website-Click%20Here-success?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Website">
+  </a>
+  &nbsp;&nbsp;
+  <img src="https://img.shields.io/badge/Status-Active-brightgreen?style=for-the-badge" alt="Status">
+  <img src="https://img.shields.io/badge/Tech-MERN%20+%20Flask-blue?style=for-the-badge" alt="Tech">
+  <img src="https://img.shields.io/badge/License-MIT-purple?style=for-the-badge" alt="License">
+</p>
 
-🔑 **Demo Credentials:**
-* **Admin Account:**
-  * Email: `vijayapandian112007@gmail.com`
-  * Password: `123456`
-* **User Account:**
-  * Email: `vijayapandiant07@gmail.com`
-  * Password: `123456`
+---
 
-![Project Status](https://img.shields.io/badge/Status-Active-brightgreen)
-![Tech Stack](https://img.shields.io/badge/Tech-MERN_Stack-blue)
-![License](https://img.shields.io/badge/License-MIT-purple)
+> [!IMPORTANT]
+> ### 🔑 Live Demo Credentials
+> Use the accounts below to explore both the citizen and administrative sides of the dashboard:
+>
+> | Role | Email | Password |
+> | :--- | :--- | :--- |
+> | **Admin Account** | `vijayapandian112007@gmail.com` | `123456` |
+> | **User Account** | `vijayapandiant07@gmail.com` | `123456` |
 
 ---
 
@@ -29,6 +36,8 @@ Welcome to the **Smart Waste Mapping Platform**, a community-driven, gamified we
 - 🔔 **Real-Time Notifications:** Stay updated instantly when your reported waste is collected or when you earn a new badge.
 - 🛡️ **Admin Dashboard:** Powerful tools for municipal workers to track hotspots, manage reports, and organize events.
 
+---
+
 ## 🌟 Unique Features
 
 - **🤖 AI-Powered Waste & Risk Prediction:** Employs a Machine Learning model (Random Forest Regressor) to predict waste volume (in tons) and risk level based on coordinates, population density, and complaint counts.
@@ -36,28 +45,33 @@ Welcome to the **Smart Waste Mapping Platform**, a community-driven, gamified we
 - **📍 Geographic Hotspot Clustering:** Automatically groups multi-report zones into density-based hotspots and scales their localized risk level.
 - **🏷️ Automated Priority Classification:** Audits report text to automatically tag priority (Low, Medium, High) and flag hazardous or pathway-blocking incidents.
 
+---
+
 ## 💻 Tech Stack
 
-This project is built using the **MERN** stack alongside modern frontend tooling:
+This project is built using a modern, multi-tier architecture combining the **MERN** stack with a **Python Flask AI microservice**:
 
-**Frontend:**
-- React 18 (Vite)
-- Tailwind CSS (Dark-mode Glassmorphism UI)
-- Lucide React (Icons)
-- React Router (Routing)
-- Leaflet / React-Leaflet (Interactive Maps)
-- Axios (API Client)
+| Layer | Component | Description & Key Features |
+| :--- | :--- | :--- |
+| **Frontend** | React 18 (Vite) | High-performance user interface |
+| | Tailwind CSS | Sleek, glassmorphic dark-mode visual theme |
+| | React Leaflet | Interactive, real-time spatial mapping UI |
+| | Lucide React | High-quality visual icon pack |
+| | Socket.io Client | Instant, push-based browser alerts |
+| **Backend** | Node.js / Express | Robust core application server API |
+| | MongoDB / Mongoose | Document mapping with support for GeoJSON indexing |
+| | Socket.io | Bidirectional server communication |
+| | JSON Web Tokens | Token-based auth middleware |
+| | Multer / Cloudinary | Secure multi-media ingestion and CDN delivery |
+| **AI Service** | Flask | Machine learning and route-optimization microservice |
+| | Scikit-learn / joblib | Random Forest model training and prediction inference |
+| | NumPy | Numerical coordinates and distance vector calculations |
 
-**Backend:**
-- Node.js & Express.js
-- MongoDB & Mongoose
-- JSON Web Tokens (JWT Authentication)
-- Socket.io (Real-time WebSockets)
-- Multer & Cloudinary (Image Uploads)
+---
 
 ## 🗄️ Database Schema
 
-Below is the Entity Relationship (ER) Diagram of the database schema, detailing the collections and their relationships:
+The platform relies on a structured, relational document database design optimized for geospatial queries. Below is the Entity Relationship (ER) Diagram representing the schema:
 
 ```mermaid
 erDiagram
@@ -116,20 +130,22 @@ erDiagram
     }
 ```
 
-For a detailed explanation of indexes, validation constraints, and other design considerations, please refer to the [database_schema.md](file:///c:/1M1B/AI-Powered-Smart-Waste-Mapping-Platform/docs/database_schema.md) file.
+> [!TIP]
+> For a detailed explanation of database indexes, geospatial properties (`2dsphere`), and validation constraints, refer to [docs/database_schema.md](file:///c:/1M1B/AI-Powered-Smart-Waste-Mapping-Platform/docs/database_schema.md).
+
+---
 
 ## 🚀 Getting Started
 
-Follow these instructions to get a copy of the project up and running on your local machine.
+Follow these instructions to configure and run the full stack (Frontend, Backend, and AI Service) on your local machine.
 
 ### Prerequisites
+* Node.js (v16 or higher)
+* Python 3.8+ (for AI Service)
+* MongoDB (Local instance or MongoDB Atlas cluster)
+* Git
 
-Ensure you have the following installed:
-- Node.js (v16 or higher)
-- MongoDB (Local instance or MongoDB Atlas cluster)
-- Git
-
-### Installation
+### Installation & Setup
 
 1. **Clone the repository:**
    ```bash
@@ -137,21 +153,11 @@ Ensure you have the following installed:
    cd AI-Powered-Smart-Waste-Mapping-Platform
    ```
 
-2. **Install Backend Dependencies:**
+2. **Backend Setup:**
    ```bash
    cd backend
    npm install
    ```
-
-3. **Install Frontend Dependencies:**
-   ```bash
-   cd ../frontend
-   npm install
-   ```
-
-### Configuration
-
-1. **Backend Environment Variables:**
    Create a `.env` file in the `backend` directory with the following variables:
    ```env
    PORT=3000
@@ -162,36 +168,51 @@ Ensure you have the following installed:
    CLOUDINARY_API_SECRET=your_cloudinary_secret
    ```
 
-2. **Frontend Environment Variables:**
+3. **Frontend Setup:**
+   ```bash
+   cd ../frontend
+   npm install
+   ```
    Create a `.env` file in the `frontend` directory:
    ```env
    VITE_API_URL=http://localhost:3000/api
    VITE_SOCKET_URL=http://localhost:3000
    ```
 
+4. **AI Service Setup:**
+   ```bash
+   cd ../ai-service
+   pip install -r requirements.txt
+   ```
+
 ### Running the Application
 
-To run the application locally, you will need two terminal windows:
+To run all components locally, start each service in a separate terminal:
 
-**Terminal 1 (Backend Server):**
-```bash
-cd backend
-npm run dev
-```
+* **Terminal 1 (Backend Core Server):**
+  ```bash
+  cd backend
+  npm run dev
+  ```
+* **Terminal 2 (Frontend Client):**
+  ```bash
+  cd frontend
+  npm run dev
+  ```
+* **Terminal 3 (AI Service Microservice):**
+  ```bash
+  cd ai-service
+  python app.py
+  ```
 
-**Terminal 2 (Frontend Client):**
-```bash
-cd frontend
-npm run dev
-```
-
-Your app will now be running on `http://localhost:5173`.
+Once running, the client application is available at `http://localhost:5173`.
 
 ---
 
 ## 🤝 Contributing
 
 We welcome contributions from the community to help build cleaner, smarter cities! 
+
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
 3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
