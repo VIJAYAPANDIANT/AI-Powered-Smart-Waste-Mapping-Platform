@@ -49,6 +49,11 @@ const EventsHub = () => {
   }, []);
 
   const handleVolunteer = async (eventId) => {
+    if (eventId.startsWith('e')) {
+      alert('Thanks for volunteering! (Demo Mode)');
+      return;
+    }
+
     try {
       const config = {
         headers: { Authorization: `Bearer ${token}` }
@@ -171,7 +176,7 @@ const EventsHub = () => {
 
                 <div className="flex items-start gap-1.5 text-xs text-gray-400 mb-6">
                   <MapPin className="h-4 w-4 text-neon-pink shrink-0 mt-0.5" />
-                  <span>{evt.location?.address}</span>
+                  <span>{evt.address || evt.location?.address}</span>
                 </div>
               </div>
 
